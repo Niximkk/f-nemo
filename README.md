@@ -29,6 +29,7 @@
 - Rename the file to IR_Codes.txt
 - Put it in the root of the SD card.
 - WAIT UNTIL ALL THE FUCKING CODES HAVE BEEN SENT. (otherwise it will stop working)
+
 (Works on my machine)
 
 ## User Interface
