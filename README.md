@@ -8,6 +8,7 @@
 * Added some dead PR (they work great, come on n0xa)
   - Enhanced about page [@gustavocelani](https://github.com/gustavocelani).
   - Flipper IR support (fix) [@danny8972](https://github.com/danny8972)
+  - Randon Mac Address for ble spam [@danny8972](https://github.com/danny8972)
 
 ## My Fucking ToDo list
 * ADD MORE PULL REQUESTS!!!
