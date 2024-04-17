@@ -1167,16 +1167,7 @@ void tvbgmenu_loop() {
       rstOverride = false; 
       return;
     }
-    #if defined(SDCARD)
-      if (region == 2) {
-        DISP.fillScreen(BGCOLOR);
-        DISP.println(TXT_TRIG_TV);
-        DISP.println(TXT_RG_EXTRA);
-        Serial.println("Start other");
-        otherIRcodes();
-      }
-    #endif
-    
+
     #if defined(USE_EEPROM)
       EEPROM.write(3, region);
       EEPROM.commit();
@@ -1191,15 +1182,27 @@ void sendAllCodes() {
   bool endingEarly = false; //will be set to true if the user presses the button during code-sending
   if (region == NA) {
     num_codes = num_NAcodes;
-  } else {
+  } 
+  else if (region == EU) {
     num_codes = num_EUcodes;
+  }
+  else {
+    #if defined(SDCARD)
+      if (region == 2) {
+        DISP.fillScreen(BGCOLOR);
+        DISP.println(TXT_TRIG_TV);
+        DISP.println(TXT_RG_EXTRA);
+        Serial.println("Start other");
+        otherIRcodes();
+      }
+    #endif
   }
   for (i = 0 ; i < num_codes; i++)
   {
     if (region == NA) {
       powerCode = NApowerCodes[i];
     }
-    else {
+    if (region == EU) {
       powerCode = EUpowerCodes[i];
     }
     const uint8_t freq = powerCode->timer_val;
@@ -1771,7 +1774,7 @@ void aj_adv(){
 /// CREDITS ///
 void credits_setup(){
   DISP.fillScreen(WHITE);
-  DISP.qrcode("https://github.com/n0xa/m5stick-nemo", 145, 22, 100, 5);
+  DISP.qrcode("https://github.com/Niximkk/fuck-nemo", 145, 22, 100, 5);
   DISP.setTextColor(BLACK, WHITE);
   DISP.fillScreen(BGCOLOR);
   // Title
@@ -1789,7 +1792,7 @@ void credits_setup(){
   DISP.setCursor(0, 56);
   DISP.printf(" M5Stack\n %s\n", platformName);
   // GitHub Source Qr Code
-  DISP.qrcode("https://github.com/n0xa/m5stick-nemo", 145, 0, 95, 3);
+  DISP.qrcode("https://github.com/Niximkk/fuck-nemo", 145, 0, 95, 3);
   // Contributors
   DISP.fillRect(0, 95, 240, 45, RED);
   DISP.setCursor(0, 98);
@@ -2427,7 +2430,7 @@ void setup() {
     Serial.printf("EEPROM 3 - TVBG Reg:   %d\n", EEPROM.read(3));
     Serial.printf("EEPROM 4 - FGColor:    %d\n", EEPROM.read(4));
     Serial.printf("EEPROM 5 - BGColor:    %d\n", EEPROM.read(5));
-    if(EEPROM.read(0) > 3 || EEPROM.read(1) > 240 || EEPROM.read(2) > 100 || EEPROM.read(3) > 1 || EEPROM.read(4) > 19 || EEPROM.read(5) > 19) {
+    if(EEPROM.read(0) > 3 || EEPROM.read(1) > 240 || EEPROM.read(2) > 100 || EEPROM.read(3) > 2 || EEPROM.read(4) > 19 || EEPROM.read(5) > 19) {
       // Assume out-of-bounds settings are a fresh/corrupt EEPROM and write defaults for everything
       Serial.println("EEPROM likely not properly configured. Writing defaults.");
       #if defined(CARDPUTER)
