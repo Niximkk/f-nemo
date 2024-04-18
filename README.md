@@ -1,17 +1,15 @@
 # FUCK M5-NEMO
 
-![M5-Nemo Matrix Logo](https://github.com/Niximkk/fuck-nemo/blob/main/NEMOMatrix.png)
+![Fuck-Nemo Matrix Logo](https://github.com/Niximkk/fuck-nemo/blob/main/NEMOMatrix.png)
 
 ![M5-Nemo on M5StickC family and M5Cardputer](https://github.com/n0xa/m5stick-nemo/blob/main/M5-Nemo.jpg)
 
 ## My Fucking Changelog
-* Added some dead PR (they work great, come on n0xa)
-  - Enhanced about page [@gustavocelani](https://github.com/gustavocelani).
-  - Flipper IR support (fix) [@danny8972](https://github.com/danny8972)
-  - Random Mac Address for ble spam [@danny8972](https://github.com/danny8972)
+* Stupid clock and battery monitor @ the main menu.
+* Minor fixes (who cares).
 
 ## My Fucking ToDo list
-* ADD MORE PULL REQUESTS!!!
+* Fix bad PRs (by waiting the fix of course).
 
 ## Features
 * [TV B-Gone](http://www.righto.com/2010/11/improved-arduino-tv-b-gone.html) Shut off many infrared-controlled TVs, projectors and other devices
@@ -31,7 +29,7 @@
 - Put it in the root of the SD card.
 - WAIT UNTIL ALL THE FUCKING CODES HAVE BEEN SENT. (otherwise it will stop working)
 
-(Works on my machine)
+(No fucking idea if it works, waiting for the fix.)
 
 ## User Interface
 There are three main controls:
@@ -102,7 +100,7 @@ arduino-cli lib install M5Cardputer --log-level warn --verbose
 arduino-cli lib install IRRemoteESP8266 --log-level warn --verbose
 
 # Compile sketch
-arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e --build-property build.partitions=huge_app --build-property upload.maximum_size=3145728 ./m5stick-nemo.ino
+arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e --build-property build.partitions=huge_app --build-property upload.maximum_size=3145728 ./fuck-nemo.ino
 
 ```
 
@@ -111,14 +109,14 @@ arduino-cli compile --fqbn m5stack:esp32:m5stack_cardputer -e --build-property b
 
 ```bash
 
-esptool.py --chip esp32s3 merge_bin --output final.bin 0x0000 m5stick-nemo.ino.bootloader.bin 0x8000 m5stick-nemo.ino.partitions.bin 0x10000 m5stick-nemo.ino.bin
+esptool.py --chip esp32s3 merge_bin --output FuckNemo.bin 0x0000 fuck-nemo.ino.bootloader.bin 0x8000 fuck-nemo.ino.partitions.bin 0x10000 fuck-nemo.ino.bin
 ```
 
 - You can now flash the merged binary firmware using `esptool`
 
 ```bash
 
-esptool.exe write_flash -z 0 final.bin
+esptool.exe write_flash -z 0 FuckNemo.bin
 ```
 
 ## Building from Source (Docker)
@@ -146,5 +144,4 @@ ls ./build
 ./scipts/flash.sh --device=/dev/ttyusb0 --build-config=./config/.env.M5Cardputer
 ```
 Things I probably won't merge in:
-* Bulk wifi deauthentication spamming
-* Bluetooth spam that potentially disrupts health and fitness trackers, smart watches, etc.
+* My credit card info.

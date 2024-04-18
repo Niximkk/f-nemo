@@ -209,6 +209,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
 // 97 - Mount/UnMount SD Card on M5Stick devices, if SDCARD is declared
 
 const String contributors[] PROGMEM = {
+  "@niximkk",
   "@bicurico",
   "@bmorcelli",
   "@chr0m1ng",
@@ -220,10 +221,11 @@ const String contributors[] PROGMEM = {
   "@marivaaldo",
   "@mmatuda",
   "@n0xa",
-  "@niximkk",
   "@unagironin",
   "@vladimirpetrov",
-  "@vs4vijay"
+  "@vs4vijay",
+  "@danny8972",
+  "@AH2005NA"
 };
 
 int advtime = 0; 
@@ -459,6 +461,47 @@ void mmenu_loop() {
     isSwitching = true;
     current_proc = mmenu[cursor].command;
   }
+  /* Stupid line */
+    DISP.drawLine(0, DISP.height()-25, DISP.width(), DISP.height()-25, FGCOLOR);
+  /* TIME */
+  #if defined(RTC)
+    DISP.setCursor(12, DISP.height()-20);
+    #if defined(STICK_C_PLUS2)
+      auto dt = StickCP2.Rtc.getDateTime();
+      DISP.printf("%02d:%02d\n", dt.time.hours, dt.time.minutes);
+    #elif defined(ESPTime)
+      DISP.printf("%02d:%02d\n", rtcp.getHour(), rtcp.getMinute());
+    #elif defined(STICK_C)
+      DISP.setCursor(12, DISP.height()-20);
+      M5.Rtc.GetBm8563Time();
+      DISP.printf("%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute);
+    #else
+      M5.Rtc.GetBm8563Time();
+      DISP.printf("%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute);
+    #endif
+  #endif
+  /* BATTERY */
+  #if defined(PWRMGMT)
+    DISP.setCursor(DISP.width()-50, DISP.height()-20);
+    DISP.print(String(M5.Power.getBatteryLevel()));
+  #endif
+  #ifdef AXP
+    DISP.setCursor(DISP.width()-50, DISP.height()-20);
+    float c = M5.Axp.GetVapsData() * 1.4 / 1000;
+    float b = M5.Axp.GetVbatData() * 1.1 / 1000;
+    int battery = ((b - 3.0) / 1.2) * 100;
+    #ifdef STICK_C
+      DISP.setCursor(DISP.width()-50, DISP.height()-20);
+    #endif
+      DISP.print(String(battery));
+  #endif
+  #if defined(CARDPUTER)
+    DISP.setCursor(DISP.width()-50, DISP.height()-20);
+    uint8_t battery = ((((analogRead(VBAT_PIN)) - 1842) * 100) / 738);
+    DISP.print(String(battery));
+  #endif
+  DISP.print("%");
+  /* BATTERY */
 }
 
 bool screen_dim_dimmed = false;
@@ -1938,12 +1981,12 @@ void btmaelstrom_loop(){
 
 /// WIFI MENU ///
 MENU wsmenu[] = {
-  { TXT_BACK, 5},
-  { TXT_WF_SCAN, 0},
-  { TXT_WF_SPAM_FUN, 1},
-  { TXT_WF_SPAM_RR, 2},
-  { TXT_WF_SPAM_RND, 3},
-  { "NEMO Portal", 4},
+  { TXT_BACK, 0},
+  { TXT_WF_SCAN, 1},
+  { TXT_WF_SPAM_FUN, 2},
+  { TXT_WF_SPAM_RR, 3},
+  { TXT_WF_SPAM_RND, 4},
+  { "NEMO Portal", 5},
 };
 int wsmenu_size = sizeof(wsmenu) / sizeof (MENU);
 
@@ -1967,24 +2010,27 @@ void wsmenu_loop() {
     current_proc = 11;
     isSwitching = true;
     switch(option) {
-      case 0:
+      case 1:
         rstOverride = false;
         isSwitching = true;
         current_proc = 14;
         break;
-      case 1:
+      case 2:
         spamtype = 1;
         break;
-      case 2:
+      case 3:
         spamtype = 2;
         break;
-      case 3:
+      case 4:
         spamtype = 3;
         break;
-      case 4:
+      case 5:
         current_proc = 19;
         break;
-      case 5:
+      case 6:
+        current_proc = 24;
+        break;
+      case 0:
         current_proc = 1;
         break;
     }

@@ -4,7 +4,7 @@
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
 
-#define IR_DATA_BUFFER_SIZE 2000
+#define IR_DATA_BUFFER_SIZE 300
 
 File databaseFile;
 
