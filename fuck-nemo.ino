@@ -22,7 +22,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
   #define NEMO_VERSION "better"
 #endif
 #ifndef USERNAME
-  #define USERNAME "ImNix"
+  #define USERNAME "Anonymous"
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
@@ -200,7 +200,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
 // 16 - Bluetooth Spam Menu
 // 17 - Bluetooth Maelstrom
 // 18 - QR Codes
-// 19 - NEMO Portal
+// 19 - Evil Portal
 // 20 - Attack menu
 // 21 - Deauth Attack
 // 22 - Custom Color Settings
@@ -240,7 +240,7 @@ bool sourApple = false;     // Internal flag to place AppleJuice into SourApple 
 bool swiftPair = false;     // Internal flag to place AppleJuice into Swift Pair random packet Mode
 bool androidPair = false;   // Internal flag to place AppleJuice into Android Pair random packet Mode
 bool maelstrom = false;     // Internal flag to place AppleJuice into Bluetooth Maelstrom mode
-bool portal_active = false; // Internal flag used to ensure NEMO Portal exits cleanly
+bool portal_active = false; // Internal flag used to ensure Evil Portal exits cleanly
 bool activeQR = false; 
 const byte PortalTickTimer = 1000;
 String apSsidName = String("");
@@ -255,7 +255,7 @@ uint8_t channel;
 String apMac = String("");
 bool target_deauth_flg = false;
 bool target_deauth = false;
-int deauth_tick = 0;        // used to delay the deauth packets when combined to Nemo Portal
+int deauth_tick = 0;        // used to delay the deauth packets when combined to Evil Portal
 bool clone_flg = false;
 // DEAUTH end
 
@@ -483,6 +483,8 @@ void mmenu_loop() {
   /* BATTERY */
   #if defined(PWRMGMT)
     DISP.setCursor(DISP.width()-50, DISP.height()-20);
+    if(M5.Power.getBatteryLevel() < 25) DISP.setTextColor(RED, BGCOLOR);
+    else if(M5.Power.getBatteryLevel() < 75) DISP.setTextColor(YELLOW, BGCOLOR);
     DISP.print(String(M5.Power.getBatteryLevel()));
   #endif
   #ifdef AXP
@@ -490,6 +492,8 @@ void mmenu_loop() {
     float c = M5.Axp.GetVapsData() * 1.4 / 1000;
     float b = M5.Axp.GetVbatData() * 1.1 / 1000;
     int battery = ((b - 3.0) / 1.2) * 100;
+    if(battery < 25) DISP.setTextColor(RED, BGCOLOR);
+    else if(battery < 75) DISP.setTextColor(YELLOW, BGCOLOR);
     #ifdef STICK_C
       DISP.setCursor(DISP.width()-50, DISP.height()-20);
     #endif
@@ -501,6 +505,7 @@ void mmenu_loop() {
     DISP.print(String(battery));
   #endif
   DISP.print("%");
+  DISP.setTextColor(FGCOLOR, BGCOLOR);
   /* BATTERY */
 }
 
@@ -1986,7 +1991,7 @@ MENU wsmenu[] = {
   { TXT_WF_SPAM_FUN, 2},
   { TXT_WF_SPAM_RR, 3},
   { TXT_WF_SPAM_RND, 4},
-  { "NEMO Portal", 5},
+  { "Evil Portal", 5},
 };
 int wsmenu_size = sizeof(wsmenu) / sizeof (MENU);
 
@@ -2208,7 +2213,7 @@ void wsAmenu_loop() {
     current_proc = 20;
     isSwitching = true;
     switch(option) {
-      case 0:                     //Go to Clone Nemo Portal
+      case 0:                     //Go to Clone Evil Portal
         rstOverride = false;
         isSwitching = true;
         clone_flg=true;
@@ -2386,7 +2391,7 @@ void qrmenu_loop() {
   }
 }
 
-/// NEMO PORTAL
+/// EVIL PORTAL
 
 void portal_setup(){
   setupWiFi();
@@ -2525,7 +2530,7 @@ void setup() {
   pAdvertising = pServer->getAdvertising();
   BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
 
-  // Nemo Portal Init
+  // Evil Portal Init
   setupSdCard();
   bootTime = lastActivity = millis();
 

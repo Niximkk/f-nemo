@@ -5,8 +5,8 @@
 ![M5-Nemo on M5StickC family and M5Cardputer](https://github.com/n0xa/m5stick-nemo/blob/main/M5-Nemo.jpg)
 
 ## My Fucking Changelog
-* Stupid clock and battery monitor @ the main menu.
-* Minor fixes (who cares).
+* Now the stupid battery indicator in the main menu has colored indicators.
+* Minor changes (who cares).
 
 ## My Fucking ToDo list
 * Fix bad PRs (by waiting the fix of course).
