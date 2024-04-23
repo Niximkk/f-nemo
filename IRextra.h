@@ -5,9 +5,7 @@
 #include <IRsend.h>
 
 #define IR_DATA_BUFFER_SIZE 300
-
 File databaseFile;
-
 
 void sendRawCommand(int frequency, String rawData);
 void sendNECextCommand(String address, String command);

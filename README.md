@@ -5,17 +5,20 @@
 ![M5-Nemo on M5StickC family and M5Cardputer](https://github.com/n0xa/m5stick-nemo/blob/main/M5-Nemo.jpg)
 
 ## My Fucking Changelog
-* Now the stupid battery indicator in the main menu has colored indicators.
-* Minor changes (who cares).
+* Added Samsung BLE Spam. - Thank you!!! [@danny8972](https://github.com/danny8972)
+* Added IR Receiver/Sender (Need an [external module](https://github.com/Arduino-IRremote/Arduino-IRremote/blob/master/pictures/IRReceiverPinout.jpg)). - Thanks [@FlasherTwelve](https://github.com/FlasherTwelve)
+* Minor fixes and changes (who cares).
 
 ## My Fucking ToDo list
 * Fix bad PRs (by waiting the fix of course).
+* Saving IR codes in Spiffs (Bruuuuuuh).
 
 ## Features
-* [TV B-Gone](http://www.righto.com/2010/11/improved-arduino-tv-b-gone.html) Shut off many infrared-controlled TVs, projectors and other devices
+* [TV B-Gone](http://www.righto.com/2010/11/improved-arduino-tv-b-gone.html) Shut off many infrared-controlled TVs, projectors and other devices.
+* [IR_Replay](https://github.com/FlasherTwelve/IR_Replay) Copy and send IR Codes (Need an [external module](https://github.com/Arduino-IRremote/Arduino-IRremote/blob/master/pictures/IRReceiverPinout.jpg)).
 * [Flipper IR File](https://github.com/Lucaslhm/Flipper-IRDB) Flipper IR File support (sd card needed).
 * [AppleJuice](https://github.com/ECTO-1A/AppleJuice) iOS Bluetooth device pairing spam
-* Bluetooth device notification spamming for SwiftPair (Windows) and Android (With random MAC Address)
+* Bluetooth device notification spamming for SwiftPair (Windows), Android and Samsung (With random MAC Address)
 * WiFi Spam - Funny SSIDs, WiFi Rickrolling, and a Random mode that creates hundreds of randomly-named SSIDs per minute
 * WiFi NEMO Portal - A captive portal that tries to social engineer email credentials - saves usernames and passwords to SD Card (if inserted into a supported reader)
 * WiFi SSID Scanner - Display 2.4 GHz SSIDs nearby, get information about them, and even clone the SSIDs in NEMO Portal
