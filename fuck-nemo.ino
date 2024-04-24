@@ -519,6 +519,7 @@ void mmenu_loop() {
     isSwitching = true;
     current_proc = mmenu[cursor].command;
   }
+  menu_extras();
 }
 
 bool screen_dim_dimmed = false;
