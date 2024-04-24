@@ -14,7 +14,7 @@ void setupReceiver() {
   DISP.fillScreen(BGCOLOR);
   DISP.setTextSize(BIG_TEXT);
   DISP.setCursor(0, 0);
-  DISP.println("Receiver");
+  DISP.println("IR Replay");
   irrecv.enableIRIn();
   delay(500);
 }
@@ -26,6 +26,7 @@ void receiveSignal() {
   DISP.println("Receiver");
   DISP.setTextSize(MEDIUM_TEXT);
   DISP.println("Waiting...");
+  pinMode(IRRECV, INPUT);
   while(true){
     if (irrecv.decode(&results)) {
       rawcode = new uint16_t[MAX_RAWBUF_SIZE];
@@ -50,6 +51,7 @@ void receiveSignal() {
       Serial.print("Hex: ");
       Serial.println(results.value, HEX);
       irrecv.resume();
+      pinMode(IRRECV, OUTPUT);
       delay(1000);
       break;
     }
@@ -57,6 +59,7 @@ void receiveSignal() {
 }
 
 void sendSignal() {
+  irsend.begin();
   DISP.fillScreen(BGCOLOR);
   DISP.setTextSize(BIG_TEXT);
   DISP.setCursor(0, 0);
