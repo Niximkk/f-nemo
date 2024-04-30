@@ -1,6 +1,8 @@
 #include <IRremoteESP8266.h>
 #include <IRrecv.h>
 #include <IRsend.h>
+#include "FS.h"
+#include "SPIFFS.h"
 
 #define MAX_RAWBUF_SIZE 100
 
@@ -42,11 +44,17 @@ void receiveSignal() {
       Serial.print("Raw Data ");
       Serial.print(rawDataLen);
       Serial.print(" : ");
+      //String RawString = "";
       for (int i = 1; i < results.rawlen; i++) {
+        //RawString += String(results.rawbuf[i]);
         Serial.print(results.rawbuf[i], DEC);
-        if (i < results.rawlen - 1) Serial.print(", ");
+        if (i < results.rawlen - 1){
+          Serial.print(", "); 
+          //RawString += ", ";
+        } 
         rawcode[i - 1] = results.rawbuf[i] * 2;
       }
+      //saveToSpiffs(RawString);
       Serial.println();
       Serial.print("Hex: ");
       Serial.println(results.value, HEX);
@@ -69,4 +77,26 @@ void sendSignal() {
   Serial.println("Sending Custom");
   irsend.sendRaw(rawcode, rawDataLen, 38); // 38Khz
   delay(1000);
+}
+
+void saveToSpiffs(String rawData){
+  if (!SPIFFS.begin()) {
+    Serial.println("Failed to mount SPIFFS");
+    return;
+  }
+  Serial.println("SPIFFS successfully mounted");
+
+  File file = SPIFFS.open("/FNemoIR.txt", FILE_WRITE);
+  if (!file) {
+    Serial.println("Error opening the file");
+    return;
+  }
+
+  if (file.println(rawData)) {
+    Serial.println("IR saved successfully");
+  } else {
+    Serial.println("Error saving IR");
+  }
+
+  file.close();
 }

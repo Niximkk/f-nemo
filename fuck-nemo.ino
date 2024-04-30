@@ -502,6 +502,7 @@ void mmenu_setup() {
   cursor = 0;
   rstOverride = true;
   drawmenu(mmenu, mmenu_size);
+  DISP.fillRect(0, DISP.height()-25, DISP.width(), 25, BLACK);
   menu_extras();
   delay(500); // Prevent switching after menu loads up
 }
@@ -511,6 +512,7 @@ void mmenu_loop() {
     cursor++;
     cursor = cursor % mmenu_size;
     drawmenu(mmenu, mmenu_size);
+    DISP.fillRect(0, DISP.height()-25, DISP.width(), 25, BLACK);
     menu_extras();
     delay(250);
   }
