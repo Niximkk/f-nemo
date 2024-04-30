@@ -16,7 +16,7 @@
 ## Read this fucking FAQ
 * Q: Will you publish it on M5burner?
   * Hell nah, compile it yourself. (And customize the code)
-* Q: Will you create releases whith .bin's?
+* Q: Will you create releases with .bin's?
   * Nuh uh.
 * Q: Why is your code shitty?
   * Cuz its my personal version of nemo, just dont use it.
