@@ -5,13 +5,13 @@
 ![M5-Nemo on M5StickC family and M5Cardputer](https://github.com/n0xa/m5stick-nemo/blob/main/M5-Nemo.jpg)
 
 ## My Fucking Changelog
-* Added Samsung BLE Spam. - Thank you!!! [@danny8972](https://github.com/danny8972)
-* Added IR Receiver/Sender (Need an [external module](https://github.com/Arduino-IRremote/Arduino-IRremote/blob/master/pictures/IRReceiverPinout.jpg)). - Thanks [@FlasherTwelve](https://github.com/FlasherTwelve)
-* Minor fixes and changes (who cares).
+* New bootscreen - [@gustavocelani](https://github.com/gustavocelani)
+* Starting the process to save IR codes at SPIFFS/SD Card.
+* Minor fixes and changes (no one cares).
 
 ## My Fucking ToDo list
+* DESTROY THE FUCKING 7 SEGMENT CLOCK!!!!
 * Fix bad PRs (by waiting the fix of course).
-* Saving IR codes in Spiffs (Bruuuuuuh).
 
 ## Read this fucking FAQ
 * Q: Will you publish it on M5burner?
