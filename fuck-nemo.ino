@@ -4,7 +4,7 @@
 // -=-=-=-=-=-=- Uncomment the platform you're building for -=-=-=-=-=-=-
 // #define STICK_C_PLUS
 // #define STICK_C_PLUS2
-// #define STICK_C
+// #define STICK_C // Not supported anymore (Womp womp xD)
 // #define CARDPUTER
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
 
@@ -19,7 +19,7 @@ uint16_t BGCOLOR=0x0001; // placeholder
 uint16_t FGCOLOR=0xFFF1; // placeholder
 
 #ifndef NEMO_VERSION
-  #define NEMO_VERSION "better"
+  #define NEMO_VERSION "Modded"
 #endif
 #ifndef USERNAME
   #define USERNAME "Anonymous"
@@ -677,7 +677,7 @@ void clearSettings(){
   DISP.setRotation(1);
   DISP.setTextColor(BLUE, WHITE);
   DISP.setCursor(40, 0);
-  DISP.println("M5-NEMO");
+  DISP.println("FK-NEMO");
   DISP.setTextColor(WHITE, BLUE);
   DISP.setTextSize(SMALL_TEXT);
   DISP.println(TXT_CLRING_SETTINGS);
@@ -1949,7 +1949,7 @@ void credits_setup(){
   DISP.setTextColor(BGCOLOR);
   DISP.setTextSize(MEDIUM_TEXT);
   DISP.setCursor(12, 5);
-  DISP.print("M5-NEMO");
+  DISP.print("FK-NEMO");
   // Version
   DISP.setTextSize(SMALL_TEXT);
   DISP.setCursor(0, 30);
@@ -2445,21 +2445,36 @@ void bootScreen(){
   #endif
   #ifndef STICK_C
   BITMAP;
-  delay(1500);
+  delay(1000);
   #endif
+  // Background
   DISP.fillScreen(BGCOLOR);
+  DISP.fillRect(0, 0, 240, 50, FGCOLOR);  // Title Rect
+  // Title
   DISP.setTextSize(BIG_TEXT);
-  DISP.setCursor(40, 0);
-  DISP.println("M5-NEMO");
-  DISP.setCursor(0, 30);
+  DISP.setTextColor(BGCOLOR);
+  DISP.setCursor(40, 1);
+  DISP.println("FK-NEMO");
+  // Version
+  DISP.setCursor(1, 32);
   DISP.setTextSize(SMALL_TEXT);
-  DISP.printf("%s-%s\n",NEMO_VERSION,platformName);
+  DISP.setTextColor(BGCOLOR);
+  DISP.printf("%s @ %s\n", NEMO_VERSION, platformName);
+  DISP.setCursor(0, 56);
+  DISP.setTextSize(SMALL_TEXT);
+  DISP.setTextColor(FGCOLOR);
 #if defined(CARDPUTER)
+  // Instructions
   DISP.println(TXT_INST_NXT);
   DISP.println(TXT_INST_PRV);
   DISP.println(TXT_INST_SEL);
   DISP.println(TXT_INST_HOME);
-  delay(1500);
+  // Press any key to continue
+  DISP.setTextSize(TINY_TEXT);
+  DISP.setTextColor(WHITE);
+  DISP.setCursor(0, 124);
+  DISP.println(TXT_INST_PRSS_KEY);
+  DISP.setTextColor(FGCOLOR);
   DISP.println(TXT_INST_PRSS_KEY);
   while(true){
     M5Cardputer.update();
@@ -2474,9 +2489,16 @@ void bootScreen(){
   DISP.print(TXT_STK_SEL);
   DISP.println(USERNAME);
   DISP.println(TXT_STK_HOME);
-  delay(1500);
+  // Just wait
+  DISP.setTextSize(TINY_TEXT);
+  DISP.setTextColor(WHITE);
+  DISP.setCursor(0, 124);
+  DISP.println("Wait 2 seconds");
+  DISP.setTextColor(FGCOLOR);
+  delay(2000);
 #endif
 }
+
 
 void qrmenu_drawmenu() {
   DISP.setTextSize(SMALL_TEXT);
