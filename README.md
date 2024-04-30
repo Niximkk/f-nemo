@@ -1,6 +1,6 @@
 # FUCK M5-NEMO
 
-![Fuck-Nemo Matrix Logo](https://github.com/Niximkk/fuck-nemo/blob/main/NEMOMatrix.png)
+![Fuck-Nemo Matrix Logo](https://github.com/Niximkk/fuck-nemo/blob/main/NEMOMatrix.png) Ubisoft, unkill watchdogs.
 
 ![M5-Nemo on M5StickC family and M5Cardputer](https://github.com/n0xa/m5stick-nemo/blob/main/M5-Nemo.jpg)
 
@@ -12,6 +12,18 @@
 ## My Fucking ToDo list
 * Fix bad PRs (by waiting the fix of course).
 * Saving IR codes in Spiffs (Bruuuuuuh).
+
+## Read this fucking FAQ
+* Q: Will you publish it on M5burner?
+  * Hell nah, compile it yourself. (And customize the code)
+* Q: Will you create releases with .bin's?
+  * Nuh uh.
+* Q: Why is your code shitty?
+  * Cuz its my personal version of nemo, just dont use it.
+* Q: What if i dont know how to compile it?
+  * [Youtube](https://www.youtube.com/), [Fucking Readme](https://github.com/Niximkk/fuck-nemo#building-from-source) etc... You will figure it out.
+* Q: I cant compile it! :(
+  * Womp womp.
 
 ## Features
 [❕] No changes [❗] Changes
@@ -53,17 +65,17 @@ There are three main controls:
   * Next/Prev: Tap the Down-Arrow/. key and Up-Arrow/; keys to navigate
   * Select: Tap the OK/Enter key or Right-Arrow/? key  
 
-## NEMO Portal
-In NEMO Portal mode, NEMO activates an open WiFi Hotspot named "Nemo Free WiFi" (configurable in portal.h) with DNS, DHCP and Web servers activated. 
-* NEMO Portal serves a fake login page that claims to provide internet access if you log in.
+## Evil Portal
+In Evil Portal mode, NEMO activates an open WiFi Hotspot named "Nemo Free WiFi" (configurable in portal.h) with DNS, DHCP and Web servers activated. 
+* Evil Portal serves a fake login page that claims to provide internet access if you log in.
 * This is a social engineering attack, and will log the username and passwords entered on the page. 
-* From the Wifi Scan details, you can clone an existing SSID from the scan list. Exiting NEMO Portal will clear the Evil Twin SSID
+* From the Wifi Scan details, you can clone an existing SSID from the scan list. Exiting Evil Portal will clear the Evil Twin SSID
 * You can view captured credentials by connecting to the portal from your own device and browsing to http://172.0.0.1/creds
 * You can set a custom SSID by connecting to the portal from your own device and browsing to http://172.0.0.1/ssid
 * If your device supports EEPROM for settings, the custom SSID you enter will be saved as the default, even if powered off.
 * If your device has an SD Card reader with a FAT filesystem formatted card inserted, the usernames and passwords will be logged to nemo-portal-creds.txt on the SD Card for you to peruse later. 
 * SD Card support is only enabled by default on the M5Stack Cardputer platform. It can be enabled on M5Stick devices but an SD Card reader must be built and attached to the front panel pin header.
-* NEMO Portal is only for use on professional engagements with a valid scope of work, educational or demonstration purposes. Storage, sale, or use of personal information without consent is against the law. 🤓
+* Evil Portal is only for use on professional engagements with a valid scope of work, educational or demonstration purposes. Storage, sale, or use of personal information without consent is against the law. 🤓
 
 ## Install .bin files manually with esptool.py
 * Install ESP-IDF tools per the [Espressif Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/)
