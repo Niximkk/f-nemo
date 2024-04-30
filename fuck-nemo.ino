@@ -57,7 +57,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
 
   // -=-=- ALIASES -=-=-
   #define DISP M5.Lcd
-  #define IRLED 9
+  #define IRLED 26 // Use 9 for built-in IR
   #define IRRECV 26
   #define SPEAKER M5.Beep
   #define BITMAP M5.Lcd.drawBitmap(0, 0, M5.Lcd.width(), M5.Lcd.height(), NEMOMatrix)
@@ -2611,11 +2611,7 @@ void setup() {
     if(EEPROM.read(0) > 3 || EEPROM.read(1) > 240 || EEPROM.read(2) > 100 || EEPROM.read(3) > 2 || EEPROM.read(4) > 19 || EEPROM.read(5) > 19) {
       // Assume out-of-bounds settings are a fresh/corrupt EEPROM and write defaults for everything
       Serial.println("EEPROM likely not properly configured. Writing defaults.");
-      #if defined(CARDPUTER)
-      EEPROM.write(0, 1);    // Right rotation for cardputer
-      #else
-      EEPROM.write(0, 3);    // Left rotation
-      #endif
+      EEPROM.write(0, 1);
       EEPROM.write(1, 15);   // 15 second auto dim time
       EEPROM.write(2, 100);  // 100% brightness
       EEPROM.write(3, 0);    // TVBG NA Region
