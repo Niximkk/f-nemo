@@ -1,8 +1,13 @@
 # FUCK M5-NEMO
 
-![Fuck-Nemo Matrix Logo](https://github.com/Niximkk/fuck-nemo/blob/main/NEMOMatrix.png) Ubisoft, unkill watchdogs.
+<a href="Deadsec Banner">
+  <img width="200px" src="https://github.com/Niximkk/fuck-nemo/assets/85513545/257378a9-6a90-45e6-9c6b-2e77ffb936be" />
+</a>
 
-![M5-Nemo on M5StickC family and M5Cardputer](https://github.com/n0xa/m5stick-nemo/blob/main/M5-Nemo.jpg)
+### Contributors (by github):
+<a href="https://github.com/Niximkk/fuck-nemo/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Niximkk/fuck-nemo" />
+</a>
 
 ## My Fucking Changelog
 * Evil Portal in the background, with indicators.
