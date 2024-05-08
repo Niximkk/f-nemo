@@ -10,12 +10,13 @@
 </a>
 
 ## My Fucking Changelog
-* Evil Portal in the background, with indicators.
-* Better clock, with Battery Info and Evil Portal Indicator.
+* Random MAC Address on BLE Spam works now. (Thanks [Marauder Firmware](https://github.com/justcallmekoko/ESP32Marauder))
+* Fixed a bug related to EP on Clone+Deauth mode. (Thanks [@elit3snip3r](https://discord.com/users/722140442887454761) - discord)
 * Minor fixes and changes (no one cares).
 
 ## My Fucking ToDo list
 * Save IR Codes to SD Card.
+* Add 433Mhz Related features. (@elit3snip3r is working on it)
 
 ## Read this fucking FAQ
 * Q: Will you publish it on M5burner?
@@ -34,15 +35,15 @@
 * ❕ [TV B-Gone](http://www.righto.com/2010/11/improved-arduino-tv-b-gone.html) Shut off many infrared-controlled TVs, projectors and other devices.
 * ❗ [IR_Replay](https://github.com/FlasherTwelve/IR_Replay) Copy and send IR Codes (Need an [external module](https://github.com/Arduino-IRremote/Arduino-IRremote/blob/master/pictures/IRReceiverPinout.jpg)).
 * ❗ [Flipper IR File](https://github.com/Lucaslhm/Flipper-IRDB) Flipper IR File support (sd card needed).
-* ❕ [AppleJuice](https://github.com/ECTO-1A/AppleJuice) iOS Bluetooth device pairing spam
+* ❗ [AppleJuice](https://github.com/ECTO-1A/AppleJuice) iOS Bluetooth device pairing spam (With random MAC Address)
 * ❗ Bluetooth device notification spamming for SwiftPair (Windows), Android and Samsung (With random MAC Address)
 * ❕ WiFi Spam - Funny SSIDs, WiFi Rickrolling, and a Random mode that creates hundreds of randomly-named SSIDs per minute
-* ❕ WiFi Evil Portal - A captive portal that tries to social engineer email credentials - saves usernames and passwords to SD Card (if inserted into a supported reader)
+* ❗ WiFi Evil Portal - A captive portal that tries to social engineer email credentials - saves usernames and passwords to SD Card (if inserted into a supported reader)
 * ❕ WiFi SSID Scanner - Display 2.4 GHz SSIDs nearby, get information about them, and even clone the SSIDs in Evil Portal
-* ❕ User-adjustable 24 Hour digital clock backed by the M5 Stick RTC so it holds relatively stable time even in deep sleep and low battery mode
+* ❗ User-adjustable 24 Hour digital clock backed by the M5 Stick RTC so it holds relatively stable time even in deep sleep and low battery mode
 * ❕ EEPROM-backed Settings for rotation, brightness, automatic dimming and Evil Portal SSID
 * ❗ Battery level and Clock at the main menu.
-* ❕ Credits in settings menu
+* ❗ Credits in settings menu
 
 ## ⚠️ How to use Flipper IR codes
 - Go to the Flipper-IRDB repo and get your codes.

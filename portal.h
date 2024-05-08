@@ -158,22 +158,24 @@ void getSSID(){
 }
 
 void printHomeToScreen() {
-  DISP.fillScreen(BGCOLOR);
-  DISP.setSwapBytes(true);
-  DISP.setTextSize(MEDIUM_TEXT);
-  DISP.setTextColor(BGCOLOR, FGCOLOR);
-  DISP.setCursor(0, 0);
-  DISP.println(" EVIL PORTAL ");
-  DISP.setTextSize(SMALL_TEXT);
-  DISP.setTextColor(FGCOLOR, BGCOLOR);
-  DISP.printf("%s\n\n",apSsidName.c_str());
-  DISP.print("WiFi IP: ");
-  DISP.println(AP_GATEWAY);
-  DISP.println("Paths: /creds /ssid");
-  DISP.setTextSize(MEDIUM_TEXT);
-  DISP.setTextColor(BGCOLOR, FGCOLOR);
-  DISP.printf("Victims: %-4d\n", totalCapturedCredentials);
-  DISP.setTextColor(FGCOLOR, BGCOLOR);
+  if(current_proc!=0){
+    DISP.fillScreen(BGCOLOR);
+    DISP.setSwapBytes(true);
+    DISP.setTextSize(MEDIUM_TEXT);
+    DISP.setTextColor(BGCOLOR, FGCOLOR);
+    DISP.setCursor(0, 0);
+    DISP.println(" EVIL PORTAL ");
+    DISP.setTextSize(SMALL_TEXT);
+    DISP.setTextColor(FGCOLOR, BGCOLOR);
+    DISP.printf("%s\n\n",apSsidName.c_str());
+    DISP.print("WiFi IP: ");
+    DISP.println(AP_GATEWAY);
+    DISP.println("Paths: /creds /ssid");
+    DISP.setTextSize(MEDIUM_TEXT);
+    DISP.setTextColor(BGCOLOR, FGCOLOR);
+    DISP.printf("Victims: %-4d\n", totalCapturedCredentials);
+    DISP.setTextColor(FGCOLOR, BGCOLOR);
+  } else {/* womp womp */}
 }
 
 String getInputValue(String argName) {

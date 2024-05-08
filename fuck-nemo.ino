@@ -5,7 +5,7 @@
 // #define STICK_C_PLUS
 // #define STICK_C_PLUS2
 // #define STICK_C // Not supported anymore (Womp womp xD)
-// #define CARDPUTER
+// #define CARDPUTER // Just use m5-bruce wtf
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
 
 // -=-=- NEMO Language for Menu and Portal -=- Thanks, @marivaaldo and @Mmatuda! -=-=-
@@ -34,7 +34,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
 #endif
 
 // -=-=- DEAUTHER -=-  @bmorcelli -=-=- | Discord: Pirata#5263 bmorcelli
-#define DEAUTHER  //Need to make some changes in arduino IDE, refer to https://github.com/bmorcelli/m5stickC_Plus2-nemo/tree/main/DEAUTH%20Prerequisites
+#define DEAUTHER  //Need to make some changes in arduino IDE, refer to https://github.com/Niximkk/fuck-nemo/tree/main/deauth_prerequisites
 
 
 #if defined(STICK_C_PLUS)
@@ -247,7 +247,7 @@ bool androidPair = false;   // Internal flag to place AppleJuice into Android Pa
 bool samsungSpam = true;   // Internal flag to place AppleJuice into Samsung Spam random packet Mode
 bool maelstrom = false;     // Internal flag to place AppleJuice into Bluetooth Maelstrom mode
 bool portal_active = false; // Internal flag used to ensure Evil Portal exits cleanly
-bool activeQR = false; 
+bool activeQR = false;
 const byte PortalTickTimer = 1000;
 String apSsidName = String("");
 bool isSwitching = true;
@@ -389,6 +389,20 @@ void check_menu_press() {
     rstOverride = false;
     current_proc = 1;
     delay(100);
+  }
+}
+
+bool check_menu_press_usable(){
+  #if defined(AXP)
+  if (M5.Axp.GetBtnPress()) {
+  #endif
+  #if defined(KB)
+    if (M5Cardputer.Keyboard.isKeyPressed(',') || M5Cardputer.Keyboard.isKeyPressed('`')){
+  #endif
+  #if defined(M5_BUTTON_MENU)
+    if (digitalRead(M5_BUTTON_MENU) == LOW){
+  #endif
+    return true;
   }
 }
 
@@ -1575,19 +1589,12 @@ void btmenu_loop() {
   }
 }
 
-void random_MAC(){
-  uint8_t tempMAC[ESP_BD_ADDR_LEN];
+void random_MAC(uint8_t* mac){
+  mac[0] = 0x02;
 
-  // Keep ESP Manufactorer ID 
-  tempMAC[0] = 0x02;
-  tempMAC[1] = 0xE5;
-
-  // Generate random values for the MAC address and add them to the ESP ID
-  uint32_t randomBytes = esp_random();
-  memcpy(&tempMAC[2], &randomBytes, 4);
-
-  // Set new MAC address
-  esp_base_mac_addr_set(tempMAC);
+  for (int i = 1; i < 6; i++) {
+    mac[i] = random(0, 255);
+  }
 }
 
 MENU ajmenu[] = {
@@ -1653,7 +1660,6 @@ void aj_loop(){
   if (check_select_press() || maelstrom) {
     deviceType = ajmenu[cursor].command;
     if (maelstrom) {
-      random_MAC();
       deviceType = random(1, 28);
     }
     switch(deviceType) {
@@ -1775,6 +1781,12 @@ void aj_adv(){
   // run the advertising loop
   // Isolating this to its own process lets us take advantage 
   // of the background stuff easier (menu button, dimmer, etc)
+  uint8_t macAddr[6];
+  random_MAC(macAddr);
+  esp_base_mac_addr_set(macAddr);
+  BLEDevice::init("");
+  BLEServer *pServer = BLEDevice::createServer();
+  pAdvertising = pServer->getAdvertising();
   rstOverride = true;
   if (sourApple || swiftPair || androidPair || maelstrom || samsungSpam){
     delay(20);   // 20msec delay instead of ajDelay for SourApple attack
@@ -1927,9 +1939,13 @@ void aj_adv(){
     pAdvertising->start();
     #if defined(M5LED)
         digitalWrite(M5LED, M5LED_ON); //LED ON on Stick C Plus
-        delay(10);
+        delay(30);
         digitalWrite(M5LED, M5LED_OFF); //LED OFF on Stick C Plus
+    #else
+        delay(30);
     #endif
+    pAdvertising->stop();
+    BLEDevice::deinit();
   }
   if (check_next_press()) {
     if (sourApple || swiftPair || androidPair || maelstrom || samsungSpam){
@@ -1947,8 +1963,10 @@ void aj_adv(){
     samsungSpam = false;
     androidPair = false;
     pAdvertising->stop(); // Bug that keeps advertising in the background. Oops.
+    BLEDevice::deinit();
     delay(250);
   }
+  if (check_menu_press_usable()) BLEDevice::deinit();
 }
 
 /// CREDITS ///
@@ -2614,6 +2632,15 @@ void portal_loop(){
           target_deauth = !target_deauth;                                                             // DEAUTH
           delay(500);                                                                                 // DEAUTH
         }
+        if (check_menu_press_usable()){
+          shutdownWebServer();
+          portal_active = false;
+          target_deauth_flg = false;                                                                     // DEAUTH
+          target_deauth = false;                                                                         // DEAUTH
+          clone_flg = false;                                                                             // DEAUTH
+          current_proc = 12;
+          delay(500);
+        }
       }
     #endif
   }
@@ -2683,11 +2710,11 @@ void setup() {
   // Random seed
   randomSeed(analogRead(0));
 
-  // Create the BLE Server
+  /* Create the BLE Server
   BLEDevice::init("");
   BLEServer *pServer = BLEDevice::createServer();
   pAdvertising = pServer->getAdvertising();
-  BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
+  BLEAdvertisementData oAdvertisementData = BLEAdvertisementData(); */
 
   // Evil Portal Init
   setupSdCard();
