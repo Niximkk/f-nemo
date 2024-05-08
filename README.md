@@ -10,8 +10,8 @@
 </a>
 
 ## My Fucking Changelog
-* Random MAC Address on BLE Spam works now. (Thanks [Marauder Firmware](https://github.com/justcallmekoko/ESP32Marauder))
-* Fixed a bug related to EP on Clone+Deauth mode. (Thanks [@elit3snip3r](https://discord.com/users/722140442887454761) - discord)
+* We are now using NimBLE, which is lighter and slightly better.
+* Fixed an issue related with Samsung BLE Spam.
 * Minor fixes and changes (no one cares).
 
 ## My Fucking ToDo list

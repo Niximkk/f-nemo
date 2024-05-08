@@ -244,7 +244,7 @@ bool rstOverride = false;   // Reset Button Override. Set to true when navigatin
 bool sourApple = false;     // Internal flag to place AppleJuice into SourApple iOS17 Exploit Mode
 bool swiftPair = false;     // Internal flag to place AppleJuice into Swift Pair random packet Mode
 bool androidPair = false;   // Internal flag to place AppleJuice into Android Pair random packet Mode
-bool samsungSpam = true;   // Internal flag to place AppleJuice into Samsung Spam random packet Mode
+bool samsungSpam = false;   // Internal flag to place AppleJuice into Samsung Spam random packet Mode
 bool maelstrom = false;     // Internal flag to place AppleJuice into Bluetooth Maelstrom mode
 bool portal_active = false; // Internal flag used to ensure Evil Portal exits cleanly
 bool activeQR = false;
@@ -284,8 +284,9 @@ bool clone_flg = false;
 #include "localization.h"
 #include "IRextra.h"
 #include "ir_replay.h"
-#include <BLEUtils.h>
-#include <BLEServer.h>
+//#include <BLEUtils.h>
+//#include <BLEServer.h>
+#include <NimBLEDevice.h>
 #if defined(DEAUTHER)
   #include "deauth.h"                                                               //DEAUTH
   #include "esp_wifi.h"                                                             //DEAUTH
@@ -1781,12 +1782,6 @@ void aj_adv(){
   // run the advertising loop
   // Isolating this to its own process lets us take advantage 
   // of the background stuff easier (menu button, dimmer, etc)
-  uint8_t macAddr[6];
-  random_MAC(macAddr);
-  esp_base_mac_addr_set(macAddr);
-  BLEDevice::init("");
-  BLEServer *pServer = BLEDevice::createServer();
-  pAdvertising = pServer->getAdvertising();
   rstOverride = true;
   if (sourApple || swiftPair || androidPair || maelstrom || samsungSpam){
     delay(20);   // 20msec delay instead of ajDelay for SourApple attack
@@ -1794,7 +1789,13 @@ void aj_adv(){
   }
   if (millis() > advtime + ajDelay){
     advtime = millis();
-    pAdvertising->stop(); // This is placed here mostly for timing.
+    uint8_t macAddr[6];
+    random_MAC(macAddr);
+    esp_base_mac_addr_set(macAddr);
+    NimBLEDevice::init("");
+    NimBLEServer *pServer = NimBLEDevice::createServer();
+    pAdvertising = pServer->getAdvertising();
+    //pAdvertising->stop(); // This is placed here mostly for timing.
                           // It allows the BLE beacon to run through the loop.
     BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
     if (sourApple){
@@ -1934,18 +1935,18 @@ void aj_adv(){
       }      
       Serial.println("");
     }
-    
+
     pAdvertising->setAdvertisementData(oAdvertisementData);
     pAdvertising->start();
     #if defined(M5LED)
         digitalWrite(M5LED, M5LED_ON); //LED ON on Stick C Plus
-        delay(30);
+        delay(20);
         digitalWrite(M5LED, M5LED_OFF); //LED OFF on Stick C Plus
     #else
-        delay(30);
+        delay(20);
     #endif
     pAdvertising->stop();
-    BLEDevice::deinit();
+    NimBLEDevice::deinit();
   }
   if (check_next_press()) {
     if (sourApple || swiftPair || androidPair || maelstrom || samsungSpam){
@@ -1963,10 +1964,10 @@ void aj_adv(){
     samsungSpam = false;
     androidPair = false;
     pAdvertising->stop(); // Bug that keeps advertising in the background. Oops.
-    BLEDevice::deinit();
+    NimBLEDevice::deinit();
     delay(250);
   }
-  if (check_menu_press_usable()) BLEDevice::deinit();
+  if (check_menu_press_usable()) NimBLEDevice::deinit();
 }
 
 /// CREDITS ///
@@ -2112,8 +2113,8 @@ void btmaelstrom_setup(){
 void btmaelstrom_loop(){
   swiftPair = false;
   sourApple = true;
-  androidPair = false;
-  samsungSpam = true;
+  androidPair = true;
+  samsungSpam = false;
   aj_adv();
   if (maelstrom){
     swiftPair = true;
@@ -2137,6 +2138,7 @@ void btmaelstrom_loop(){
     aj_adv();
   }
   if (maelstrom){
+    samsungSpam = false;
     swiftPair = false;
     androidPair = false;
     sourApple = false;
@@ -2710,7 +2712,7 @@ void setup() {
   // Random seed
   randomSeed(analogRead(0));
 
-  /* Create the BLE Server
+  /* Create the BLE Serverf
   BLEDevice::init("");
   BLEServer *pServer = BLEDevice::createServer();
   pAdvertising = pServer->getAdvertising();
