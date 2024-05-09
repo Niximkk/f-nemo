@@ -10,40 +10,53 @@
 </a>
 
 ## My Fucking Changelog
-* We are now using NimBLE, which is lighter and slightly better.
-* Fixed an issue related with Samsung BLE Spam.
-* Minor fixes and changes (no one cares).
-
-## My Fucking ToDo list
-* Save IR Codes to SD Card.
-* Add 433Mhz Related features. (@elit3snip3r is working on it)
+* ✨ We are now using NimBLE, which is lighter and slightly better.
+* 🔨 Fixed an issue related with Samsung BLE Spam.
+* 🔨 Minor fixes and changes (no one cares).
 
 ## Read this fucking FAQ
-* Q: Will you publish it on M5burner?
+* ❔ Will you publish it on M5burner or release bin's?
   * Hell nah, compile it yourself. (And customize the code)
-* Q: Will you create releases with .bin's?
-  * Nuh uh.
-* Q: Why is your code shitty?
+* ❔ Why is your code shitty?
   * Cuz its my personal version of nemo, just dont use it.
-* Q: What if i dont know how to compile it?
-  * [Youtube](https://www.youtube.com/), [Fucking Readme](https://github.com/Niximkk/fuck-nemo#building-from-source) etc... You will figure it out.
-* Q: I cant compile it! :(
-  * Womp womp.
+* ❔ What if i dont know how to compile it?
+  * You can find a tutorial at [Azur Firmware's Server](https://discord.gg/d8dHNh5F74).
 
-## Features
-[❕] No changes [❗] Changes
-* ❕ [TV B-Gone](http://www.righto.com/2010/11/improved-arduino-tv-b-gone.html) Shut off many infrared-controlled TVs, projectors and other devices.
-* ❗ [IR_Replay](https://github.com/FlasherTwelve/IR_Replay) Copy and send IR Codes (Need an [external module](https://github.com/Arduino-IRremote/Arduino-IRremote/blob/master/pictures/IRReceiverPinout.jpg)).
-* ❗ [Flipper IR File](https://github.com/Lucaslhm/Flipper-IRDB) Flipper IR File support (sd card needed).
-* ❗ [AppleJuice](https://github.com/ECTO-1A/AppleJuice) iOS Bluetooth device pairing spam (With random MAC Address)
-* ❗ Bluetooth device notification spamming for SwiftPair (Windows), Android and Samsung (With random MAC Address)
-* ❕ WiFi Spam - Funny SSIDs, WiFi Rickrolling, and a Random mode that creates hundreds of randomly-named SSIDs per minute
-* ❗ WiFi Evil Portal - A captive portal that tries to social engineer email credentials - saves usernames and passwords to SD Card (if inserted into a supported reader)
-* ❕ WiFi SSID Scanner - Display 2.4 GHz SSIDs nearby, get information about them, and even clone the SSIDs in Evil Portal
-* ❗ User-adjustable 24 Hour digital clock backed by the M5 Stick RTC so it holds relatively stable time even in deep sleep and low battery mode
-* ❕ EEPROM-backed Settings for rotation, brightness, automatic dimming and Evil Portal SSID
-* ❗ Battery level and Clock at the main menu.
-* ❗ Credits in settings menu
+## Fucking Features
+[🔨] Broken [🌱] WIP
+* ✨ Infrared:
+  * [TV B-Gone](http://www.righto.com/2010/11/improved-arduino-tv-b-gone.html) Shut off many infrared-controlled TVs, projectors and other devices.
+  * 🌱 [IR_Replay](https://github.com/FlasherTwelve/IR_Replay) Copy and send IR Codes (Need an [external module](https://github.com/Arduino-IRremote/Arduino-IRremote/blob/master/pictures/IRReceiverPinout.jpg)).
+  * 🔨 [Flipper IR File](https://github.com/Lucaslhm/Flipper-IRDB) Flipper IR File support (sd card needed).
+* ✨ BLE Spam: 
+  * AppleJuice (IOS).
+  * SwiftPair (Windows).
+  * Google (Android).
+  * Samsung (Well, Samsung).
+  * Maelstrom (Combined).
+* ✨ Wifi:
+  *  WiFi Spam - Funny SSIDs, WiFi Rickrolling, and a Random mode that creates hundreds of randomly-named SSIDs per minute.
+  *  WiFi Evil Portal - A captive portal that tries to social engineer email credentials - saves usernames and passwords to SD Card.
+  *  WiFi SSID Scanner - Display 2.4 GHz SSIDs nearby, get information about them, and even clone the SSIDs in Evil Portal 
+* ✨ Misc:
+  *  User-adjustable 24 Hour digital clock backed by the M5 Stick RTC with a notification bar.
+  *  EEPROM-backed Settings for rotation, brightness, automatic dimming and Evil Portal SSID.
+  *  Notification bar at the main menu.
+  *  Credits in settings menu and bootscreen redesigned.
+
+### Soon...
+
+* 🪽 433Mhz:
+  *  Jammer.
+  *  Read Signals.
+  *  Save Signals.
+  *  Emulate Signals.
+* 🪽 Wifi:
+  *  Deauth Bomb/Spam - Deauth every network in range.
+  *  Packet Sniffer.
+* 🪽 BLE:
+  *  Sniffer.
+  *  Detect Card Skimmers.
 
 ## ⚠️ How to use Flipper IR codes
 - Go to the Flipper-IRDB repo and get your codes.
@@ -51,7 +64,7 @@
 - Put it in the root of the SD card.
 - WAIT UNTIL ALL THE FUCKING CODES HAVE BEEN SENT. (otherwise it will stop working)
 
-(No fucking idea if it works, waiting for the fix.)
+(Broken feature, wait for a fix.)
 
 ## User Interface
 There are three main controls:
