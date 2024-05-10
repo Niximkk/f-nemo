@@ -451,8 +451,7 @@ MENU mmenu[] = {
 #if defined(RTC)
   { TXT_CLOCK, 0},
 #endif
-  { "TV-B-Gone", 13}, // We jump to the region menu first
-  { "IR Receiver", 24},
+  { "Infrared", 26},
   { "Bluetooth", 16},
   { "WiFi", 12},
   { "QR Codes", 18},
@@ -1174,6 +1173,44 @@ int rotation = 1;
   }
 #endif // Cardputer
 
+/// Infrared Menu ///
+
+MENU irmenu[] = {
+  { TXT_BACK, 3},
+  { "TV-B-Gone", 13},
+  { "IR Receiver", 24},
+};
+int irmenu_size = sizeof(irmenu) / sizeof (MENU);
+
+void irmenu_setup() {
+  cursor = 0;
+  rstOverride = true;
+  drawmenu(irmenu, irmenu_size);
+  delay(500);
+}
+
+void irmenu_loop() {
+  if (check_next_press()) {
+    cursor++;
+    cursor = cursor % irmenu_size;
+    delay(250);
+    drawmenu(irmenu, irmenu_size);
+  }
+  if (check_select_press()) {
+    int option = irmenu[cursor].command;
+    if(option==3) {
+      current_proc = 1;
+      isSwitching = true;
+      rstOverride = false; 
+      return;
+    } else { 
+      rstOverride = false;
+      isSwitching = true;
+      current_proc = option;
+    }
+  }
+}
+
 /// IR Receiver ///
 
 MENU recvmenu[] = {
@@ -1206,15 +1243,11 @@ void receiver_loop() {
       sendSignal();
       digitalWrite(IRLED, M5LED_OFF);
     } else if (option == 3) {
-      current_proc = 1;
+      current_proc = 26;
       isSwitching = true;
       rstOverride = false; 
       return;
     }
-    current_proc = 24;
-    isSwitching = true;
-    rstOverride = false; 
-    return;
   }
 }
 
@@ -1283,7 +1316,7 @@ void tvbgmenu_loop() {
     region = tvbgmenu[cursor].command;
 
     if (region == 3) {
-      current_proc = 1;
+      current_proc = 26;
       isSwitching = true;
       rstOverride = false; 
       return;
@@ -2830,6 +2863,11 @@ void loop() {
         case 24:
           receiver_setup();
           break;
+        case 25:
+          //Soon
+        case 26:
+          irmenu_setup();
+          break;
     }
   }
 
@@ -2923,6 +2961,11 @@ void loop() {
         break;
       case 24:
         receiver_loop();
+        break;
+      case 25:
+        //Soon
+      case 26:
+        irmenu_loop();
         break;
     #if defined(SDCARD)                                                // SDCARD M5Stick
       #ifndef CARDPUTER                                                // SDCARD M5Stick
