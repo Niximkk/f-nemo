@@ -3,7 +3,7 @@
 
 // -=-=-=-=-=-=- Uncomment the platform you're building for -=-=-=-=-=-=-
 // #define STICK_C_PLUS
-#define STICK_C_PLUS2
+// #define STICK_C_PLUS2
 // #define STICK_C // Not supported anymore (Womp womp xD)
 // #define CARDPUTER // Just use m5-bruce wtf
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
@@ -215,7 +215,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
 
 const String contributors[] PROGMEM = {
   "@niximkk",
-  "@EliteSniper_06"
+  "@EliteSniper_06",
   "@bicurico",
   "@bmorcelli",
   "@chr0m1ng",
