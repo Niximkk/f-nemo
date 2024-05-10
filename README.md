@@ -10,8 +10,8 @@
 </a>
 
 ## My Fucking Changelog
-* ✨ We are now using NimBLE, which is lighter and slightly better.
-* 🔨 Fixed an issue related with Samsung BLE Spam.
+* ✨ Everytime you restart your device, your MAC will be randomly generated.
+* 🔨 Random MAC is now optional, because it was crashing sometimes.
 * 🔨 Minor fixes and changes (no one cares).
 
 ## Read this fucking FAQ
@@ -57,6 +57,8 @@
 * 🪽 BLE:
   *  Sniffer.
   *  Detect Card Skimmers.
+  *  Refresh Mac Address.
+  *  Enable/Disable RandomMAC.
 
 ## ⚠️ How to use Flipper IR codes
 - Go to the Flipper-IRDB repo and get your codes.

@@ -35,7 +35,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
 
 // -=-=- DEAUTHER -=-  @bmorcelli -=-=- | Discord: Pirata#5263 bmorcelli
 #define DEAUTHER  //Need to make some changes in arduino IDE, refer to https://github.com/Niximkk/fuck-nemo/tree/main/deauth_prerequisites
-
+// #define RANDOMMAC //May crash your device.
 
 #if defined(STICK_C_PLUS)
   #include <M5StickCPlus.h>
@@ -1627,7 +1627,7 @@ void random_MAC(uint8_t* mac){
   mac[0] = 0x02;
 
   for (int i = 1; i < 6; i++) {
-    mac[i] = random(0, 255);
+    mac[i] = esp_random() & 0xFF;
   }
 }
 
@@ -1821,13 +1821,16 @@ void aj_adv(){
     advtime = 0; // bypass ajDelay counter
   }
   if (millis() > advtime + ajDelay){
+    #ifdef RANDOMMAC
+      uint8_t macAddr[6];
+      random_MAC(macAddr);
+      esp_base_mac_addr_set(macAddr);
+      NimBLEDevice::init("");
+      NimBLEServer *pServer = NimBLEDevice::createServer();
+      pAdvertising = pServer->getAdvertising();
+    #endif
+
     advtime = millis();
-    uint8_t macAddr[6];
-    random_MAC(macAddr);
-    esp_base_mac_addr_set(macAddr);
-    NimBLEDevice::init("");
-    NimBLEServer *pServer = NimBLEDevice::createServer();
-    pAdvertising = pServer->getAdvertising();
     pAdvertising->stop(); // This is placed here mostly for timing.
                           // It allows the BLE beacon to run through the loop.
     BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
@@ -1882,8 +1885,8 @@ void aj_adv(){
 
       i += display_name_len;  
       oAdvertisementData.addData(std::string((char *)packet, size));
-      free(packet);
-      free((void*)display_name);
+      //free(packet);
+      //free((void*)display_name);
     } else if (androidPair) {
       Serial.print(TXT_AD_SPAM_ADV);
       uint8_t packet[14];
@@ -1975,7 +1978,9 @@ void aj_adv(){
         delay(20);
     #endif
     pAdvertising->stop();
-    NimBLEDevice::deinit();
+    #ifdef RANDOMMAC
+      NimBLEDevice::deinit();
+    #endif
   }
   if (check_next_press()) {
     if (sourApple || swiftPair || androidPair || maelstrom || samsungSpam){
@@ -1993,10 +1998,16 @@ void aj_adv(){
     samsungSpam = false;
     androidPair = false;
     pAdvertising->stop(); // Bug that keeps advertising in the background. Oops.
-    NimBLEDevice::deinit();
+    #ifdef RANDOMMAC
+      NimBLEDevice::deinit();
+    #endif
     delay(250);
   }
-  if (check_menu_press_usable()) NimBLEDevice::deinit();
+  if (check_menu_press_usable()) {
+    #ifdef RANDOMMAC
+      NimBLEDevice::deinit();
+    #endif
+  }
 }
 
 /// CREDITS ///
@@ -2741,11 +2752,15 @@ void setup() {
   // Random seed
   randomSeed(analogRead(0));
 
-  /* Create the BLE Serverf
-  BLEDevice::init("");
-  BLEServer *pServer = BLEDevice::createServer();
+#ifndef RANDOMMAC // Sets a random MAC at the start of the firmware anyways.
+  uint8_t macAddr[6];
+  random_MAC(macAddr);
+  esp_base_mac_addr_set(macAddr);
+  NimBLEDevice::init("");
+  NimBLEServer *pServer = NimBLEDevice::createServer();
   pAdvertising = pServer->getAdvertising();
-  BLEAdvertisementData oAdvertisementData = BLEAdvertisementData(); */
+  BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
+#endif
 
   // Evil Portal Init
   setupSdCard();
