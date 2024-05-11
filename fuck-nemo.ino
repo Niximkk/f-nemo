@@ -209,6 +209,11 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
 // 21 - Deauth Attack
 // 22 - Custom Color Settings
 // 23 - Pre-defined color themes
+// 24 - Infrared Receiver
+// 25 - Soon
+// 26 - Infrared Menu
+// 27 - Bluetooth Menu
+// 28 - Bluetooth Settings
 // .. - ..
 // 97 - Mount/UnMount SD Card on M5Stick devices, if SDCARD is declared
 
@@ -452,7 +457,7 @@ MENU mmenu[] = {
   { TXT_CLOCK, 0},
 #endif
   { "Infrared", 26},
-  { "Bluetooth", 16},
+  { "Bluetooth", 27},
   { "WiFi", 12},
   { "QR Codes", 18},
   { TXT_SETTINGS, 2},
@@ -1210,7 +1215,6 @@ void irmenu_loop() {
     }
   }
 }
-
 /// IR Receiver ///
 
 MENU recvmenu[] = {
@@ -1248,6 +1252,10 @@ void receiver_loop() {
       rstOverride = false; 
       return;
     }
+    current_proc = 24;
+    isSwitching = true;
+    rstOverride = false; 
+    return;
   }
 }
 
@@ -1522,9 +1530,94 @@ void sendAllCodes() {
   }
 #endif // RTC
 
+/// BT Menu ///
+
+MENU btmenu[] = {
+  { TXT_BACK, 3},
+  { TXT_BT_SPAM, 16},
+  { TXT_SETTINGS, 28},
+};
+int btmenu_size = sizeof(btmenu) / sizeof (MENU);
+
+void btmenu_setup() {
+  cursor = 0;
+  rstOverride = true;
+  drawmenu(btmenu, btmenu_size);
+  delay(500);
+}
+
+void btmenu_loop() {
+  if (check_next_press()) {
+    cursor++;
+    cursor = cursor % btmenu_size;
+    delay(250);
+    drawmenu(btmenu, btmenu_size);
+  }
+  if (check_select_press()) {
+    int option = btmenu[cursor].command;
+    if(option==3) {
+      current_proc = 1;
+      isSwitching = true;
+      rstOverride = false; 
+      return;
+    } else { 
+      rstOverride = false;
+      isSwitching = true;
+      current_proc = option;
+    }
+  }
+}
+
+/// Bluetooth Settings ///
+
+MENU btsetmenu[] = {
+  { TXT_BACK, 3},
+  { "Randomize MAC", 0},
+};
+int btsetmenu_size = sizeof(btsetmenu) / sizeof (MENU);
+
+void btsetmenu_setup() {
+  cursor = 0;
+  rstOverride = true;
+  drawmenu(btsetmenu, btsetmenu_size);
+  delay(500);
+}
+
+void btsetmenu_loop() {
+  if (check_next_press()) {
+    cursor++;
+    cursor = cursor % btsetmenu_size;
+    delay(250);
+    drawmenu(btsetmenu, btsetmenu_size);
+  }
+  if (check_select_press()) {
+    int option = btsetmenu[cursor].command;
+    if(option == 0) {
+      NimBLEDevice::deinit();
+      uint8_t macAddr[6];
+      random_MAC(macAddr);
+      esp_base_mac_addr_set(macAddr);
+      NimBLEDevice::init("");
+      NimBLEServer *pServer = NimBLEDevice::createServer();
+      pAdvertising = pServer->getAdvertising();
+      BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
+      #if defined(M5LED)
+        digitalWrite(M5LED, M5LED_ON); //LED ON on Stick C Plus
+        delay(20);
+        digitalWrite(M5LED, M5LED_OFF); //LED OFF on Stick C Plus
+      #endif
+    } else if (option == 3) {
+      current_proc = 1;
+      isSwitching = true;
+      rstOverride = false; 
+      return;
+    }
+  }
+}
+
 /// Bluetooth Spamming ///
 /// BTSPAM MENU ///
-MENU btmenu[] = {
+MENU blesmenu[] = {
   { TXT_BACK, 5},
   { "AppleJuice", 0},
   { "Swift Pair", 1},
@@ -1533,9 +1626,9 @@ MENU btmenu[] = {
   { TXT_SA_CRASH, 2},
   { "BT Maelstrom", 3},
 };
-int btmenu_size = sizeof(btmenu) / sizeof (MENU);
+int blesmenu_size = sizeof(blesmenu) / sizeof (MENU);
 
-void btmenu_setup() {
+void blesmenu_setup() {
   cursor = 0;
   sourApple = false;
   swiftPair = false;
@@ -1543,82 +1636,82 @@ void btmenu_setup() {
   androidPair = false;
   samsungSpam = false;
   rstOverride = true;
-  drawmenu(btmenu, btmenu_size);
+  drawmenu(blesmenu, blesmenu_size);
   delay(500); // Prevent switching after menu loads up
 }
 
-void btmenu_loop() {
+void blesmenu_loop() {
   if (check_next_press()) {
     cursor++;
-    cursor = cursor % btmenu_size;
-    drawmenu(btmenu, btmenu_size);
+    cursor = cursor % blesmenu_size;
+    drawmenu(blesmenu, blesmenu_size);
     delay(250);
   }
   if (check_select_press()) {
-    int option = btmenu[cursor].command;
-    DISP.fillScreen(BGCOLOR);
-    DISP.setTextSize(MEDIUM_TEXT);
-    DISP.setCursor(0, 0);
-    DISP.setTextColor(BGCOLOR, FGCOLOR);
-    DISP.printf(" %-12s\n", TXT_BT_SPAM);
-    DISP.setTextColor(FGCOLOR, BGCOLOR);
-    DISP.setTextSize(SMALL_TEXT);
-    DISP.print(TXT_ADV);
+    int option = blesmenu[cursor].command;
+    if(option==5){
+      DISP.fillScreen(BGCOLOR);
+      rstOverride = false;
+      isSwitching = true;
+      current_proc = 27;
+    } else {
+      DISP.fillScreen(BGCOLOR);
+      DISP.setTextSize(MEDIUM_TEXT);
+      DISP.setCursor(0, 0);
+      DISP.setTextColor(BGCOLOR, FGCOLOR);
+      DISP.printf(" %-12s\n", TXT_BT_SPAM);
+      DISP.setTextColor(FGCOLOR, BGCOLOR);
+      DISP.setTextSize(SMALL_TEXT);
+      DISP.print(TXT_ADV);
 
-    switch(option) {
-      case 0:
-        DISP.fillScreen(BGCOLOR);
-        rstOverride = false;
-        isSwitching = true;
-        current_proc = 8;
-        break;
-      case 1:
-        swiftPair = true;
-        current_proc = 9; // jump straight to appleJuice Advertisement
-        rstOverride = false;
-        isSwitching = true;
-        DISP.print(TXT_SP_RND);
-        DISP.print(TXT_SEL_EXIT2);
-        break;
-      case 2:
-        sourApple = true;
-        current_proc = 9; // jump straight to appleJuice Advertisement
-        rstOverride = false;
-        isSwitching = true;
-        DISP.print(TXT_SA_CRASH);
-        DISP.print(TXT_SEL_EXIT2);
-        break;
-      case 3:
-        rstOverride = false;
-        isSwitching = true;
-        current_proc = 17; // Maelstrom
-        DISP.print("Bluetooth Maelstrom\n");
-        DISP.print(TXT_CMB_BT_SPAM);
-        DISP.print(TXT_SEL_EXIT2);
-        break;
-      case 4:
-        androidPair = true;
-        current_proc = 9; // jump straight to appleJuice Advertisement
-        rstOverride = false;
-        isSwitching = true;
-        DISP.print(TXT_AD_SPAM);
-        DISP.print(TXT_SEL_EXIT2);
-        break;
-
-      case 5:
-        DISP.fillScreen(BGCOLOR);
-        rstOverride = false;
-        isSwitching = true;
-        current_proc = 1;
-        break;
-
-      case 6:
-        samsungSpam = true;
-        current_proc = 9; // jump straight to appleJuice Advertisement
-        rstOverride = false;
-        isSwitching = true;
-        DISP.print("Samsung Spam");
-        DISP.print(TXT_SEL_EXIT2);
+      switch(option) {
+        case 0:
+          DISP.fillScreen(BGCOLOR);
+          rstOverride = false;
+          isSwitching = true;
+          current_proc = 8;
+          break;
+        case 1:
+          swiftPair = true;
+          current_proc = 9; // jump straight to appleJuice Advertisement
+          rstOverride = false;
+          isSwitching = true;
+          DISP.print(TXT_SP_RND);
+          DISP.print(TXT_SEL_EXIT2);
+          break;
+        case 2:
+          sourApple = true;
+          current_proc = 9; // jump straight to appleJuice Advertisement
+          rstOverride = false;
+          isSwitching = true;
+          DISP.print(TXT_SA_CRASH);
+          DISP.print(TXT_SEL_EXIT2);
+          break;
+        case 3:
+          rstOverride = false;
+          isSwitching = true;
+          current_proc = 17; // Maelstrom
+          DISP.print("Bluetooth Maelstrom\n");
+          DISP.print(TXT_CMB_BT_SPAM);
+          DISP.print(TXT_SEL_EXIT2);
+          break;
+        case 4:
+          androidPair = true;
+          current_proc = 9; // jump straight to appleJuice Advertisement
+          rstOverride = false;
+          isSwitching = true;
+          DISP.print(TXT_AD_SPAM);
+          DISP.print(TXT_SEL_EXIT2);
+          break;
+        case 6:
+          samsungSpam = true;
+          current_proc = 9; // jump straight to appleJuice Advertisement
+          rstOverride = false;
+          isSwitching = true;
+          DISP.print("Samsung Spam");
+          DISP.print(TXT_SEL_EXIT2);
+          break;
+      }
     }
   }
 }
@@ -1986,7 +2079,7 @@ void aj_adv(){
     if (sourApple || swiftPair || androidPair || maelstrom || samsungSpam){
       isSwitching = true;
       current_proc = 16;
-      drawmenu(btmenu, btmenu_size);
+      drawmenu(blesmenu, blesmenu_size);
     } else {
       isSwitching = true;
       current_proc = 8;      
@@ -2850,7 +2943,7 @@ void loop() {
         wscan_result_setup();
         break;
       case 16:
-        btmenu_setup();
+        blesmenu_setup();
         break;
       case 17:
         btmaelstrom_setup();
@@ -2882,6 +2975,12 @@ void loop() {
           //Soon
         case 26:
           irmenu_setup();
+          break;
+        case 27:
+          btmenu_setup();
+          break;
+        case 28:
+          btsetmenu_setup();
           break;
     }
   }
@@ -2949,7 +3048,7 @@ void loop() {
       wscan_result_loop();
       break;
     case 16:
-      btmenu_loop();
+      blesmenu_loop();
       break;
     case 17:
       btmaelstrom_loop();
@@ -2982,10 +3081,16 @@ void loop() {
       case 26:
         irmenu_loop();
         break;
+      case 27:
+        btmenu_loop();
+        break;
+      case 28:
+        btsetmenu_loop();
+        break;
     #if defined(SDCARD)                                                // SDCARD M5Stick
       #ifndef CARDPUTER                                                // SDCARD M5Stick
         case 97:
-          ToggleSDCard();                                              // SDCARD M5Stick
+          ToggleSDCard(1);                                              // SDCARD M5Stick
           break;                                                       // SDCARD M5Stick
       #endif                                                           // SDCARD M5Stick
     #endif                                                             // SDCARD M5Stick

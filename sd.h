@@ -66,13 +66,13 @@ bool setupSdCard() {
 
 #if defined(SDCARD)
   #ifndef CARDPUTER
-    void ToggleSDCard()
+    void ToggleSDCard(int proc)
     {
       rstOverride = true;
       isSwitching = true;
       uint8_t cardType = NULL;
       uint64_t cardSize = NULL;
-      current_proc=1;
+      current_proc=proc;
       DISP.fillScreen(BGCOLOR);
       DISP.setCursor(5, 1);
       if (sdcardMounted == true) {
