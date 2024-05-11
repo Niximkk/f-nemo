@@ -3,7 +3,7 @@
 
 // -=-=-=-=-=-=- Uncomment the platform you're building for -=-=-=-=-=-=-
 // #define STICK_C_PLUS
-// #define STICK_C_PLUS2
+ #define STICK_C_PLUS2
 // #define STICK_C // Not supported anymore (Womp womp xD)
 // #define CARDPUTER // Just use m5-bruce wtf
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
@@ -1196,8 +1196,8 @@ void irmenu_loop() {
   if (check_next_press()) {
     cursor++;
     cursor = cursor % irmenu_size;
-    delay(250);
     drawmenu(irmenu, irmenu_size);
+    delay(250);
   }
   if (check_select_press()) {
     int option = irmenu[cursor].command;
@@ -1215,7 +1215,6 @@ void irmenu_loop() {
 }
 
 /// IR Receiver ///
-
 MENU recvmenu[] = {
   { TXT_BACK, 3},
   { "IR Receiver", 0},
@@ -1235,8 +1234,8 @@ void receiver_loop() {
   if (check_next_press()) {
     cursor++;
     cursor = cursor % recvmenu_size;
-    delay(250);
     drawmenu(recvmenu, recvmenu_size);
+    delay(250);
   }
   if (check_select_press()) {
     int option = recvmenu[cursor].command;
@@ -2530,15 +2529,10 @@ MENU rf433[] = {
 int rf433_size = sizeof(rf433) / sizeof (MENU);
 
 void rf433menu_setup() {
-  DISP.fillScreen(BGCOLOR);
-  DISP.setTextSize(BIG_TEXT);
-  DISP.setCursor(0, 0);
-  DISP.println("433 Mhz");
-  DISP.setTextSize(MEDIUM_TEXT);
   cursor = 0;
   rstOverride = true;
-  delay(1000);
   drawmenu(rf433, rf433_size);
+  delay(500);
 }
 
 void rf433menu_loop() {
@@ -2553,7 +2547,7 @@ void rf433menu_loop() {
 
     switch (selected_option) {
       case 0:
-        current_proc = 1;
+        current_proc = 25;
         isSwitching = true;
         rstOverride = false;
         break;
@@ -2611,7 +2605,8 @@ void jammer_loop() {
       DISP.println("JAMMING");
       DISP.setCursor(50, 90);
       DISP.println("STARTED");
-    } else {
+    } 
+    else {
       DISP.fillScreen(BGCOLOR);
       noTone(JAMM); 
       jammerActivated = false; 
@@ -2621,8 +2616,11 @@ void jammer_loop() {
       DISP.setCursor(50, 90);
       DISP.println("STOPPED");
     }
+    rstOverride = false;
+    isSwitching = true;
   }
 }
+
 
 void bootScreen(){
   // Boot Screen
