@@ -91,7 +91,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
   #define DISP M5.Lcd
   #define IRLED 19
   #define IRRECV 26
-  #define JAMM 26
+  #define JAMMER 26
   #define BITMAP M5.Lcd.drawBitmap(0, 0, M5.Lcd.width(), M5.Lcd.height(), FuckNemo)
   #define M5_BUTTON_MENU 35
   #define M5_BUTTON_HOME 37
@@ -220,7 +220,6 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
 
 const String contributors[] PROGMEM = {
   "@niximkk",
-  "@EliteSniper_06",
   "@bicurico",
   "@bmorcelli",
   "@chr0m1ng",
@@ -461,7 +460,7 @@ MENU mmenu[] = {
   { "Infrared", 26},
   { "Bluetooth", 27},
   { "WiFi", 12},
-  { "433Mhz", 27},
+  { "433Mhz", 29},
   { "QR Codes", 18},
   { TXT_SETTINGS, 2},
 };
@@ -1182,7 +1181,6 @@ int rotation = 1;
 #endif // Cardputer
 
 /// Infrared Menu ///
-
 MENU irmenu[] = {
   { TXT_BACK, 3},
   { "TV-B-Gone", 13},
@@ -1218,6 +1216,7 @@ void irmenu_loop() {
     }
   }
 }
+
 /// IR Receiver ///
 MENU recvmenu[] = {
   { TXT_BACK, 3},
@@ -2616,7 +2615,7 @@ void wsAmenu_loop() {
 
 /// 433Mhz MENU ///
 MENU rf433[] = {
-  { TXT_BACK, 0},
+  { TXT_BACK, 3},
   { "RF Jammer", 1},
 };
 int rf433_size = sizeof(rf433) / sizeof (MENU);
@@ -2636,25 +2635,32 @@ void rf433menu_loop() {
     delay(250);
   }
   if (check_select_press()) {
-    int selected_option = rf433[cursor].command;
-
-    switch (selected_option) {
-      case 0:
-        current_proc = 25;
-        isSwitching = true;
-        rstOverride = false;
-        break;
-      case 1:
-        jammer_setup();
-        while (!check_next_press()) {
-          jammer_loop();
-        }
-        break;
+    int option = rf433[cursor].command;
+    if (option == 3) {
+      current_proc = 1;
+      isSwitching = true;
+      rstOverride = false; 
+      return;
     }
-    rstOverride = false;
-    isSwitching = true;
+    else {
+      rstOverride = false;
+      isSwitching = true;
+      current_proc = option;
+    }
   }
 }
+
+    //switch (option) {
+    //  case 0:
+    //    current_proc = 1;
+    //    isSwitching = true;
+    //    rstOverride = false;
+    //    break;
+    //  case 1:
+    //    current_proc = 25;
+    //    break;
+    //}
+
 
 /// RF Jammer ///
 bool jammerActivated = false;
@@ -2682,7 +2688,7 @@ void jammer_setup() {
       DISP.println("STOPPED");
     }
 
-  pinMode(JAMM, OUTPUT);
+  pinMode(JAMMER, OUTPUT);
 }
 
 
@@ -2691,7 +2697,7 @@ void jammer_loop() {
     delay(200);
     if (!jammerActivated) {
       DISP.fillScreen(BGCOLOR);
-      tone(JAMM, 1000);  
+      tone(JAMMER, 1000);  
       jammerActivated = true;
       DISP.setTextColor(TFT_GREEN, BGCOLOR);
       DISP.setCursor(50, 20);
@@ -2701,7 +2707,7 @@ void jammer_loop() {
     } 
     else {
       DISP.fillScreen(BGCOLOR);
-      noTone(JAMM); 
+      noTone(JAMMER); 
       jammerActivated = false; 
       DISP.setTextColor(TFT_RED, BGCOLOR);
       DISP.setCursor(50, 20);
@@ -2713,7 +2719,6 @@ void jammer_loop() {
     isSwitching = true;
   }
 }
-
 
 void bootScreen(){
   // Boot Screen
@@ -3086,6 +3091,9 @@ void loop() {
         case 28:
           btsetmenu_setup();
           break;
+        case 29:
+          rf433menu_setup();
+          break;
     }
   }
 
@@ -3190,6 +3198,9 @@ void loop() {
         break;
       case 28:
         btsetmenu_loop();
+        break;
+      case 29:
+        rf433menu_loop();
         break;
     #if defined(SDCARD)                                                // SDCARD M5Stick
       #ifndef CARDPUTER                                                // SDCARD M5Stick
