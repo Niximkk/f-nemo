@@ -5,13 +5,12 @@
 </a>
 
 ### Contributors (by github):
-<a href="https://github.com/Niximkk/fuck-nemo/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Niximkk/fuck-nemo" />
+<a href="https://github.com/niximkk/fuck-nemo/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=niximkk/fuck-nemo" />
 </a>
 
 ## My Fucking Changelog
-* ✨ Everytime you restart your device, your MAC will be randomly generated.
-* 🔨 Random MAC is now optional, because it was crashing sometimes.
+* ✨ RF Jammer and Bootscreen for all devices. [@Elitesniper06](https://github.com/Elitesniper06)
 * 🔨 Minor fixes and changes (no one cares).
 
 ## Read this fucking FAQ
@@ -26,18 +25,24 @@
 [🔨] Broken [🌱] WIP
 * ✨ Infrared:
   * [TV B-Gone](http://www.righto.com/2010/11/improved-arduino-tv-b-gone.html) Shut off many infrared-controlled TVs, projectors and other devices.
-  * 🌱 [IR_Replay](https://github.com/FlasherTwelve/IR_Replay) Copy and send IR Codes (Need an [external module](https://github.com/Arduino-IRremote/Arduino-IRremote/blob/master/pictures/IRReceiverPinout.jpg)).
+  * 🌱 [IR_Replay](https://github.com/FlasherTwelve/IR_Replay) Copy and send IR Codes (receiver needed).
   * 🔨 [Flipper IR File](https://github.com/Lucaslhm/Flipper-IRDB) Flipper IR File support (sd card needed).
-* ✨ BLE Spam: 
-  * AppleJuice (IOS).
-  * SwiftPair (Windows).
-  * Google (Android).
-  * Samsung (Well, Samsung).
-  * Maelstrom (Combined).
+  * > 🧩 Modules: [Receiver](https://pt.aliexpress.com/item/1005006255266093.html), [Transmitter](https://pt.aliexpress.com/item/1005005609797213.html).
+* ✨ BLE:
+  * Refresh Mac Address.
+  * BLE Spam
+    * AppleJuice (IOS).
+    * SwiftPair (Windows).
+    * Google (Android).
+    * Samsung (Well, Samsung).
+    * Maelstrom (Combined).
 * ✨ Wifi:
   *  WiFi Spam - Funny SSIDs, WiFi Rickrolling, and a Random mode that creates hundreds of randomly-named SSIDs per minute.
   *  WiFi Evil Portal - A captive portal that tries to social engineer email credentials - saves usernames and passwords to SD Card.
   *  WiFi SSID Scanner - Display 2.4 GHz SSIDs nearby, get information about them, and even clone the SSIDs in Evil Portal 
+* ✨ 433Mhz:
+  *  Jammer - Disrupts signals in the 433MHz frequency range (module needed).
+  * > 🧩 Modules: [Receiver and Transmitter](https://pt.aliexpress.com/item/1005005921670385.html).
 * ✨ Misc:
   *  User-adjustable 24 Hour digital clock backed by the M5 Stick RTC with a notification bar.
   *  EEPROM-backed Settings for rotation, brightness, automatic dimming and Evil Portal SSID.
@@ -47,7 +52,6 @@
 ### Soon...
 
 * 🪽 433Mhz:
-  *  Jammer.
   *  Read Signals.
   *  Save Signals.
   *  Emulate Signals.
@@ -57,7 +61,6 @@
 * 🪽 BLE:
   *  Sniffer.
   *  Detect Card Skimmers.
-  *  Refresh Mac Address.
   *  Enable/Disable RandomMAC.
 
 ## ⚠️ How to use Flipper IR codes
