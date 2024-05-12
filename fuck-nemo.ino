@@ -211,7 +211,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
 // 22 - Custom Color Settings
 // 23 - Pre-defined color themes
 // 24 - Infrared Receiver
-// 25 - Soon
+// 25 - 433Mhz Jammer
 // 26 - Infrared Menu
 // 27 - Bluetooth Menu
 // 28 - Bluetooth Settings
@@ -2616,7 +2616,7 @@ void wsAmenu_loop() {
 /// 433Mhz MENU ///
 MENU rf433[] = {
   { TXT_BACK, 3},
-  { "RF Jammer", 1},
+  { "RF Jammer", 25},
 };
 int rf433_size = sizeof(rf433) / sizeof (MENU);
 
@@ -2636,31 +2636,18 @@ void rf433menu_loop() {
   }
   if (check_select_press()) {
     int option = rf433[cursor].command;
-    if (option == 3) {
+    if(option==3) {
       current_proc = 1;
       isSwitching = true;
       rstOverride = false; 
       return;
-    }
-    else {
+    } else { 
       rstOverride = false;
       isSwitching = true;
-      current_proc = option;
+      current_proc = 25;
     }
   }
 }
-
-    //switch (option) {
-    //  case 0:
-    //    current_proc = 1;
-    //    isSwitching = true;
-    //    rstOverride = false;
-    //    break;
-    //  case 1:
-    //    current_proc = 25;
-    //    break;
-    //}
-
 
 /// RF Jammer ///
 bool jammerActivated = false;
@@ -2672,51 +2659,52 @@ void jammer_setup() {
   DISP.println("RF Jammer");
   DISP.setTextSize(MEDIUM_TEXT);
   delay(1000);
-  DISP.fillScreen(BGCOLOR);
 
-  if (jammerActivated) {
+  if (!jammerActivated) {
+    DISP.fillScreen(BGCOLOR);
+    DISP.setTextColor(TFT_RED, BGCOLOR);
+    DISP.setCursor(50, 20);
+    DISP.println("JAMMING");
+    DISP.setCursor(50, 90);
+    DISP.println("STOPPED");
+  } 
+  else if (jammerActivated) {
+    DISP.fillScreen(BGCOLOR);
+    DISP.setTextColor(TFT_GREEN, BGCOLOR);
+    DISP.setCursor(50, 20);
+    DISP.println("JAMMING");
+    DISP.setCursor(50, 90);
+    DISP.println("STARTED");
+  }
+
+  pinMode(JAMMER, OUTPUT);
+}
+
+void jammer_loop() {
+  if (check_select_press()) {
+    Serial.printf("boton pulsado\n");
+    delay(200);
+    if (!jammerActivated) {
+      DISP.fillScreen(BGCOLOR);
+      tone(JAMMER, 1000);  
+      jammerActivated = true;
+      Serial.printf("jammerActivated = true\n");
       DISP.setTextColor(TFT_GREEN, BGCOLOR);
       DISP.setCursor(50, 20);
       DISP.println("JAMMING");
       DISP.setCursor(50, 90);
       DISP.println("STARTED");
     } else {
-      DISP.setTextColor(TFT_RED, BGCOLOR);
-      DISP.setCursor(50, 20);
-      DISP.println("JAMMING");
-      DISP.setCursor(50, 90);
-      DISP.println("STOPPED");
-    }
-
-  pinMode(JAMMER, OUTPUT);
-}
-
-
-void jammer_loop() {
-  if (check_select_press()) {
-    delay(200);
-    if (!jammerActivated) {
-      DISP.fillScreen(BGCOLOR);
-      tone(JAMMER, 1000);  
-      jammerActivated = true;
-      DISP.setTextColor(TFT_GREEN, BGCOLOR);
-      DISP.setCursor(50, 20);
-      DISP.println("JAMMING");
-      DISP.setCursor(50, 90);
-      DISP.println("STARTED");
-    } 
-    else {
       DISP.fillScreen(BGCOLOR);
       noTone(JAMMER); 
-      jammerActivated = false; 
+      jammerActivated = false;
+      Serial.printf("jammerActivated = false\n");
       DISP.setTextColor(TFT_RED, BGCOLOR);
       DISP.setCursor(50, 20);
       DISP.println("JAMMING");
       DISP.setCursor(50, 90);
       DISP.println("STOPPED");
     }
-    rstOverride = false;
-    isSwitching = true;
   }
 }
 
@@ -3063,7 +3051,7 @@ void loop() {
       case 19:
         portal_setup();
         break;
-            case 20:
+      case 20:
         wsAmenu_setup();
         break;
       #if defined(DEAUTHER)
@@ -3082,6 +3070,7 @@ void loop() {
           break;
         case 25:
           jammer_setup();
+          break;
         case 26:
           irmenu_setup();
           break;
@@ -3190,6 +3179,7 @@ void loop() {
         break;
       case 25:
         jammer_loop();
+        break;
       case 26:
         irmenu_loop();
         break;
