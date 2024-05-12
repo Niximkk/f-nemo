@@ -254,6 +254,7 @@ bool samsungSpam = false;   // Internal flag to place AppleJuice into Samsung Sp
 bool maelstrom = false;     // Internal flag to place AppleJuice into Bluetooth Maelstrom mode
 bool portal_active = false; // Internal flag used to ensure Evil Portal exits cleanly
 bool activeQR = false;
+bool jammerActivated = false; // 
 const byte PortalTickTimer = 1000;
 String apSsidName = String("");
 bool isSwitching = true;
@@ -524,6 +525,9 @@ void mmenu_setup() {
   drawmenu(mmenu, mmenu_size);
   DISP.fillRect(0, DISP.height()-25, DISP.width(), 25, BLACK);
   menu_extras();
+  jammerActivated = false;
+  noTone(JAMMER);
+  Serial.printf("jammerActivated = false\n");
   delay(500); // Prevent switching after menu loads up
 }
 
@@ -2650,8 +2654,6 @@ void rf433menu_loop() {
 }
 
 /// RF Jammer ///
-bool jammerActivated = false;
-
 void jammer_setup() {
   DISP.fillScreen(BGCOLOR);
   DISP.setTextSize(BIG_TEXT);
@@ -2661,6 +2663,9 @@ void jammer_setup() {
   delay(1000);
 
   if (!jammerActivated) {
+    noTone(JAMMER); 
+    jammerActivated = false;
+    Serial.printf("jammerActivated = false\n");
     DISP.fillScreen(BGCOLOR);
     DISP.setTextColor(TFT_RED, BGCOLOR);
     DISP.setCursor(50, 20);
@@ -2668,14 +2673,6 @@ void jammer_setup() {
     DISP.setCursor(50, 90);
     DISP.println("STOPPED");
   } 
-  else if (jammerActivated) {
-    DISP.fillScreen(BGCOLOR);
-    DISP.setTextColor(TFT_GREEN, BGCOLOR);
-    DISP.setCursor(50, 20);
-    DISP.println("JAMMING");
-    DISP.setCursor(50, 90);
-    DISP.println("STARTED");
-  }
 
   pinMode(JAMMER, OUTPUT);
 }
@@ -2685,8 +2682,8 @@ void jammer_loop() {
     Serial.printf("boton pulsado\n");
     delay(200);
     if (!jammerActivated) {
+      tone(JAMMER, 1000);
       DISP.fillScreen(BGCOLOR);
-      tone(JAMMER, 1000);  
       jammerActivated = true;
       Serial.printf("jammerActivated = true\n");
       DISP.setTextColor(TFT_GREEN, BGCOLOR);
@@ -2695,8 +2692,8 @@ void jammer_loop() {
       DISP.setCursor(50, 90);
       DISP.println("STARTED");
     } else {
-      DISP.fillScreen(BGCOLOR);
-      noTone(JAMMER); 
+      noTone(JAMMER);
+      DISP.fillScreen(BGCOLOR); 
       jammerActivated = false;
       Serial.printf("jammerActivated = false\n");
       DISP.setTextColor(TFT_RED, BGCOLOR);
