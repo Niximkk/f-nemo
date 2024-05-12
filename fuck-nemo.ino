@@ -2665,7 +2665,6 @@ void jammer_setup() {
   if (!jammerActivated) {
     noTone(JAMMER); 
     jammerActivated = false;
-    Serial.printf("jammerActivated = false\n");
     DISP.fillScreen(BGCOLOR);
     DISP.setTextColor(TFT_RED, BGCOLOR);
     DISP.setCursor(50, 20);
@@ -2679,7 +2678,6 @@ void jammer_setup() {
 
 void jammer_loop() {
   if (check_select_press()) {
-    Serial.printf("boton pulsado\n");
     delay(200);
     if (!jammerActivated) {
       tone(JAMMER, 1000);
