@@ -3,7 +3,7 @@
 
 // -=-=-=-=-=-=- Uncomment the platform you're building for -=-=-=-=-=-=-
 // #define STICK_C_PLUS
- #define STICK_C_PLUS2
+// #define STICK_C_PLUS2
 // #define STICK_C // Not supported anymore (Womp womp xD)
 // #define CARDPUTER // Just use m5-bruce wtf
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
@@ -59,6 +59,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
   #define DISP M5.Lcd
   #define IRLED 26 // Use 9 for built-in IR
   #define IRRECV 26
+  #define JAMMER 26
   #define SPEAKER M5.Beep
   #define BITMAP M5.Lcd.drawBitmap(0, 0, M5.Lcd.width(), M5.Lcd.height(), NEMOMatrix)
   #define SD_CLK_PIN 0
@@ -126,6 +127,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
   #define DISP M5.Lcd
   #define IRLED 9
   #define IRRECV 26
+  #define JAMMER 26
   #define BITMAP Serial.println("unsupported")
   #define SD_CLK_PIN 0
   #define SD_MISO_PIN 36
@@ -154,6 +156,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
   #define DISP M5Cardputer.Display
   #define IRLED 44
   #define IRRECV 1
+  #define JAMMER 26
   #define BACKLIGHT 38
   #define MINBRIGHT 165
   #define SPEAKER M5Cardputer.Speaker
@@ -254,7 +257,7 @@ bool samsungSpam = false;   // Internal flag to place AppleJuice into Samsung Sp
 bool maelstrom = false;     // Internal flag to place AppleJuice into Bluetooth Maelstrom mode
 bool portal_active = false; // Internal flag used to ensure Evil Portal exits cleanly
 bool activeQR = false;
-bool jammerActivated = false; // 
+bool jammerActivated = false;
 const byte PortalTickTimer = 1000;
 String apSsidName = String("");
 bool isSwitching = true;
@@ -2661,17 +2664,22 @@ void jammer_setup() {
   DISP.println("RF Jammer");
   DISP.setTextSize(MEDIUM_TEXT);
   delay(1000);
-
-  if (!jammerActivated) {
-    noTone(JAMMER); 
-    jammerActivated = false;
-    DISP.fillScreen(BGCOLOR);
-    DISP.setTextColor(TFT_RED, BGCOLOR);
-    DISP.setCursor(50, 20);
-    DISP.println("JAMMING");
-    DISP.setCursor(50, 90);
-    DISP.println("STOPPED");
-  } 
+  DISP.fillScreen(BGCOLOR);
+  DISP.setTextColor(TFT_RED, BGCOLOR);
+  DISP.setCursor(50, 20);
+  DISP.println("JAMMING");
+  DISP.setCursor(50, 90);
+  DISP.println("STOPPED");
+  //if (!jammerActivated) {
+  //  noTone(JAMMER); 
+  //  jammerActivated = false;
+  //  DISP.fillScreen(BGCOLOR);
+  //  DISP.setTextColor(TFT_RED, BGCOLOR);
+  //  DISP.setCursor(50, 20);
+  //  DISP.println("JAMMING");
+  //  DISP.setCursor(50, 90);
+  //  DISP.println("STOPPED");
+  //} 
 
   pinMode(JAMMER, OUTPUT);
 }
