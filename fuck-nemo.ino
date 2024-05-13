@@ -61,7 +61,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
   #define IRRECV 26
   #define JAMMER 26
   #define SPEAKER M5.Beep
-  #define BITMAP M5.Lcd.drawBitmap(0, 0, M5.Lcd.width(), M5.Lcd.height(), NEMOMatrix)
+  #define BITMAP M5.Lcd.drawBitmap(0, 0, M5.Lcd.width(), M5.Lcd.height(), FuckNemo)
   #define SD_CLK_PIN 0
   #define SD_MISO_PIN 36
   #define SD_MOSI_PIN 26
@@ -160,7 +160,7 @@ uint16_t FGCOLOR=0xFFF1; // placeholder
   #define BACKLIGHT 38
   #define MINBRIGHT 165
   #define SPEAKER M5Cardputer.Speaker
-  #define BITMAP M5Cardputer.Display.drawBmp(NEMOMatrix, 97338)
+  #define BITMAP M5Cardputer.Display.drawBmp(FuckNemo, 97338)
   #define SD_CLK_PIN 40
   #define SD_MISO_PIN 39
   #define SD_MOSI_PIN 14
