@@ -1,4 +1,5 @@
-# FUCK M5-NEMO
+# ⚠️ Discontinued project. 
+> Use [Bruce](https://github.com/pr3y/Bruce) instead!
 
 <a href="Deadsec Banner">
   <img width="200px" src="https://github.com/Niximkk/fuck-nemo/assets/85513545/257378a9-6a90-45e6-9c6b-2e77ffb936be" />
