@@ -1,4 +1,5 @@
 # ⚠️ Discontinued project. 
+### DO NOT POST THIS ON M5BURNER!
 > Use [Bruce](https://github.com/pr3y/Bruce) instead!
 
 <a href="Deadsec Banner">
